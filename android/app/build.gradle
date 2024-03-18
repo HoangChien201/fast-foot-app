@@ -78,6 +78,9 @@ android {
         applicationId "com.app"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
+        //notifi
+        missingDimensionStrategy "RNNotifications.reactNativeVersion", "reactNative60" // See note below!
+        //
         versionCode 1
         versionName "1.0"
     }
@@ -107,6 +110,7 @@ dependencies {
     // The version of react-native is set by the React Native Gradle Plugin
     implementation("com.facebook.react:react-android")
     implementation project(':react-native-vector-icons')
+    implementation fileTree(dir: 'D:\\ManageRestaurant\\App\\android\\app\\libs', include: ['*.aar', '*.jar'], exclude: [])
     debugImplementation("com.facebook.flipper:flipper:${FLIPPER_VERSION}")
     debugImplementation("com.facebook.flipper:flipper-network-plugin:${FLIPPER_VERSION}") {
         exclude group:'com.squareup.okhttp3', module:'okhttp'
@@ -124,7 +128,18 @@ dependencies {
     implementation 'com.google.android.gms:play-services-base:18.0.1'
     implementation 'com.google.android.gms:play-services-location:19.0.1'
     implementation 'com.google.android.gms:play-services-maps:18.0.2'
+
+    //momo
+    implementation project(':react-native-momosdk')
+
+    //firebase-notifi
+    implementation project(':react-native-notifications')
+    implementation 'com.google.firebase:firebase-core:16.0.0'
+
 }
 
 apply from: file("../../node_modules/@react-native-community/cli-platform-android/native_modules.gradle"); applyNativeModulesAppBuildGradle(project)
 apply from: file("../../node_modules/react-native-vector-icons/fonts.gradle")
+
+//notifi
+apply plugin: 'com.google.gms.google-services'

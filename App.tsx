@@ -7,58 +7,36 @@
 
 import React from 'react';
 import {
-  SafeAreaView,
-  View,
-  StyleSheet,
-  Text
 } from 'react-native';
 
-import UseStack from './component/stack/GroceryStack';
 import { Provider, useSelector } from 'react-redux';
-import { store } from './component/store/store';
-import ManageNavigation from './component/navigation/ManageNavigation';
-import { NavigationContainer } from '@react-navigation/native';
-import ManagementStack from './component/stack/ManagementStack';
-import StaffsScreen from './screen/manager/StaffsScreen';
-import StaffStack from './component/stack/StaffStack';
-import OrderDetailScreen from './screen/grocery/OrderDetailScreen';
-import ShipperStack from './component/stack/ShipperStack';
-import OrderShipperDetail from './screen/staff/OrderShipperDetail';
-import ManageAddressScreen from './screen/user/ManageAddressScreen';
-import SendMailScreen from './screen/user/SendMailScreen';
-import SendOTPScreen from './screen/user/SendOTPScreen';
-import ChangePasswordSceen from './screen/user/ChangePasswordScreen';
+import ManageNavigation from './src/component/navigation/ManageNavigation';
+import { store } from './src/component/store/store';
+import { SocketConnect, socket } from './src/helper/SocketHandle';
+import { Notification, NotificationBackgroundFetchResult, NotificationCompletion, Notifications, Registered, RegistrationError } from 'react-native-notifications';
+import RequestNotificationPermission from './src/permissions/RequestNotificationPermission';
+import { registerRemoteNotificationsEvent } from './src/notifications/Events';
+import { useNetInfo } from '@react-native-community/netinfo';
+
 
 
 function App(): JSX.Element {
+  SocketConnect()
+  console.log('render');
+  
+  RequestNotificationPermission()
+
+  registerRemoteNotificationsEvent()
+
+  const netInfo = useNetInfo();
+  
   return (
     <Provider store={store}>
-      <ManageNavigation/>
+      <ManageNavigation />
     </Provider>
-    // <NavigationContainer>
-    //   <ShipperStack/>
-    // </NavigationContainer>
-    // <SendOTPScreen/>
+
+    // <OrderCompleteScreen/>
   );
 }
-
-const styles = StyleSheet.create({
-  sectionContainer: {
-    marginTop: 32,
-    paddingHorizontal: 24,
-  },
-  sectionTitle: {
-    fontSize: 24,
-    fontWeight: '600',
-  },
-  sectionDescription: {
-    marginTop: 8,
-    fontSize: 18,
-    fontWeight: '400',
-  },
-  highlight: {
-    fontWeight: '700',
-  },
-});
 
 export default App;

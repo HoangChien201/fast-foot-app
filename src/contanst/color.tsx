@@ -1,0 +1,21 @@
+export const Color={
+    primary100:'#FFF4E9',
+    primary150:'#FFE6CC',
+    primary200:'#F8774A',
+    primary300:'#f8f7fc',
+    primary350:'#EEF1F4',
+    primary400:'#b9babc',
+    primary500:'#77757f',
+    textBrown:'#6D3805',
+    textBrown1:'#AC8E71',
+    backgroundInput:'#F3F3F3',
+    backgroundGray:'#F2F2F2',
+    greenComplete:'#d2fffa',
+    statusDone:"#719c82",
+    statusOnTheWay:'#1abbec',
+    statusPending:'#4f4f4f',
+    placeholderTextColor:'#A0A0A0',
+    line:'#F4F5F7',
+    chatSend:'#F8774A',
+    chatReveice:'#ECEAEA'
+}
