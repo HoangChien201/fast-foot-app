@@ -1,5 +1,9 @@
-import { ScrollView, StyleSheet, Text, TouchableOpacity, View, Image, Alert } from 'react-native'
+import { ScrollView, StyleSheet,View, Alert } from 'react-native'
 import React, { useState } from 'react'
+import { NavigationProp, ParamListBase } from '@react-navigation/native'
+import { useDispatch, useSelector } from 'react-redux'
+import { ALERT_TYPE, Dialog } from 'react-native-alert-notification'
+
 
 import DeliveryLocation from '../../component/ui/payment/DeliveryLocation'
 import ExpectedTime from '../../component/ui/payment/ExpectedTime'
@@ -7,95 +11,93 @@ import OrderSummary from '../../component/ui/payment/OrderSummary'
 import { Color } from '../../contanst/color'
 import PaymentMethod from '../../component/ui/payment/PaymentMethod'
 import SeeItem from '../../component/ui/payment/SeeItem'
-import { NavigationProp, ParamListBase } from '@react-navigation/native'
 import ModalListCart from '../../component/ui/ModalListCart'
-import { useDispatch, useSelector } from 'react-redux'
 import { RootState } from '../../component/store/store'
-import { addBill, order_type } from '../../component/store/billDeliveryReducer'
-import { clearCart } from '../../component/store/cartReducer'
+import { CreateOrderRequest} from '../../component/store/billDeliveryReducer'
 import { addBillDeliveryHttp } from '../../http/BillHTTP'
-import { getStaffShipperDeliveryHTTP } from '../../http/UserHTTP'
+import { locationDeliveryType } from '../../component/store/locationDelireryReducer'
+import { FormatAddressRecipient } from '../../contanst/FormatAddress'
+import PaymentCashHandle from '../../component/ui/payment/PaymentCashHandle'
+import { PaymentZaloHandle } from '../../component/ui/payment/PaymentZaloHandle'
+import { setOrderTracking } from '../../component/store/orderTrackingReducer'
+import Loading from '../../component/ui/Loading'
+import { clearCartReducer } from '../../component/store/cartReducer'
 import { clearCartItemHttp } from '../../http/CartHTTP'
-import axios from 'axios'
-import { onPressPaymentMomo } from '../../contanst/PaymentMomoHandle'
-import { socket } from '../../helper/SocketHandle'
+
 interface PaymentProp {
   navigation: NavigationProp<ParamListBase>
 }
 const PaymentScreen: React.FC<PaymentProp> = ({ navigation }) => {
-  const listCart = useSelector((state: RootState) => state.cart.value)
   const user = useSelector((state: RootState) => state.user.value)
-  const distpatch = useDispatch()
+  const locationDelivery: locationDeliveryType | null = useSelector((state: RootState) => state.locationDelivery.value)
 
+
+  const dispatch=useDispatch()
   const [isVisibleModalSeeItem, setIsVisibleModalSeeItem] = useState(false)
+  const [isLoading,setIsLoading]=useState(false)
   const [valuePayment, setValuePayment] = useState({
-    deliveryLocation: null,
     expectedTime: null,
     paymentMethod: null,
-    summary: null,
-    listCart: listCart,
-    timeOrder: '',
-    id: ''
   })
-
 
   async function OnSubmit() {
     const {
-      deliveryLocation,
       expectedTime,
       paymentMethod,
     } = { ...valuePayment }
+    const deliveryLocation = locationDelivery ? FormatAddressRecipient(locationDelivery) : null
 
-    if (!expectedTime || !paymentMethod || !listCart) {
-      Alert.alert("Notification", "All field need to be entered")
+    if (!expectedTime || !paymentMethod || !deliveryLocation) {
+      Dialog.show({
+        type: ALERT_TYPE.WARNING,
+        textBody: 'Have the field empty',
+        title: 'Warning',
+        button: 'OK'
+      })
       return
     }
-    // const staffShipper = await getStaffShipperDeliveryHTTP();
-    if (user?.id) {
-      const bill: order_type = {
-        address: 'deliveryLocation',
-        payment: true,
+    if (user) {
+      const bill: CreateOrderRequest = {
+        address: deliveryLocation,
+        payment: false,
         methodPayment: paymentMethod,
         expectedTime: expectedTime,
         user: user?.id,
+        charges:1000
       }
 
-      const billDeliveryRes = await addBillDeliveryHttp(bill)
+      try {
+        const createOrder = await addBillDeliveryHttp(bill)
 
-      // //chuyển sang app khi chọn phương thức thanh toán momo
-      // if (billDeliveryRes?.methodPayment === 'momo') {
-      //   const valuePaymentMomoApp = {
-      //     merchantname: 'FastFood',
-      //     merchantcode: 'FF01', //Tên đối tác
-      //     merchantNameLabel: 'Thanh toán hóa đơn', //Label để hiển thị tên đối tác trên app MoMo
-      //     amount: 20000, //giá
-      //     enviroment: '0', //"0"?: SANBOX , "1"?: PRODUCTION
-      //     action: 'gettoken', //Giá trị là gettoken. KHÔNG THAY ĐỔI
-      //     partner: 'merchant', //Giá trị là merchant. KHÔNG THAY ĐỔI
-      //     description: 'Thanh toán đồ ăn', //Mô tả chi tiết
-      //     appScheme: 'momocgv20170101', //Partner Scheme Id được cung cấp bởi MoMo - 
-      //   }
-      //   onPressPaymentMomo(valuePaymentMomoApp)
+        if(!createOrder) return
+        dispatch(setOrderTracking({
+          order_id:createOrder.id
+        }))
 
-      // }
+        //chuyển sang app khi chọn phương thức thanh toán momo
+        if (createOrder.methodPayment === 'zalo') { 
+          setIsLoading(true)
+          PaymentZaloHandle(createOrder.total,createOrder.id,navigation)
+          setTimeout(()=>{
+            setIsLoading(false)
+          },3000)
 
-      socket.emit('notification',{
-        to:'staff',
-        content:'Đặt hàng'
-      })
+        } else {
 
-      navigation.navigate("OrderCompleteScreen", {
-        bill_id: billDeliveryRes.id
-      })
-      Alert.alert("Notification", "Payment Success")
+          //thanh toán bằng tiền mặt -- chuyển sang màn hình theo giõi đơn
+          PaymentCashHandle(createOrder.id,navigation)
+
+        }
+        clearCart()
+      } catch (error) {
+        Alert.alert("Lỗi", "" + error)
+      }
     }
+  }
 
-
-
-    distpatch(clearCart())
-    clearCartItemHttp(user?.id)
-
-
+  async function clearCart(){
+    dispatch(clearCartReducer())
+    await clearCartItemHttp(user?.id)
   }
 
   function updateValuePayment(type: string, value: any) {
@@ -109,10 +111,11 @@ const PaymentScreen: React.FC<PaymentProp> = ({ navigation }) => {
 
   return (
     <View style={styles.container}>
+      <Loading isLoading={isLoading}/>
       <ScrollView
         showsVerticalScrollIndicator={false}
       >
-        <DeliveryLocation updateValuePayment={updateValuePayment} valueAddressDelivery={valuePayment.deliveryLocation} />
+        <DeliveryLocation updateValuePayment={updateValuePayment} />
 
         <ExpectedTime updateValuePayment={updateValuePayment} />
 
@@ -121,7 +124,6 @@ const PaymentScreen: React.FC<PaymentProp> = ({ navigation }) => {
         <PaymentMethod updateValuePayment={updateValuePayment} />
 
         <OrderSummary OnSubmit={OnSubmit} updateValuePayment={updateValuePayment} />
-
 
       </ScrollView>
       <ModalListCart isVisible={isVisibleModalSeeItem} setVisible={setIsVisibleModalSeeItem} />

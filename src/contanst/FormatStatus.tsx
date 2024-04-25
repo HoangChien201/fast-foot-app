@@ -1,12 +1,30 @@
-export function Status(status:number){
-    switch (status){
+export function Status(status: number) {
+    switch (status) {
         case 0:
-            return 'Chưa xác nhận'
+            return 'Unconfimred'
         case 1:
-            return 'Đã xác nhận'
+            return 'Confimred'
         case 2:
-            return 'Đang giao'
+            return 'Waiting for delivering'
         case 3:
-            return 'Đã giao'
+            return 'Delivering'
+        case 4:
+            return 'Delivered'
+        case 5:
+            return 'Cancle'
+    }
+}
+
+export function TextButtonStatus(status?: number) {
+    switch (status) {
+        case 0:
+        case 2:
+            return 'Accept'
+        case 1:
+            return 'Next'
+        case 3:
+            return 'Done'
+        default:
+            return ''
     }
 }

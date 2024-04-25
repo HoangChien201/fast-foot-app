@@ -18,7 +18,7 @@ export const getCategory = async () => {
     try {
         const axiosInstance = AxiosInstance();
         const url = '/category';
-        const response = await axiosInstance.get<Array<CategoryType>>(url);
+        const response:CategoryType[] = await axiosInstance.get(url);
         return response;
     } catch (error) {
         console.log('lấy danh sách category lỗi');

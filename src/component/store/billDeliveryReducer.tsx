@@ -1,6 +1,7 @@
 import { createSlice } from '@reduxjs/toolkit'
-import { cartItemType, cartType } from './cartReducer'
-import { addressDeliveryType, addressType, clientType, staffType } from './userReducer'
+import { cartItemType, cartType } from './modalAddCartReducer'
+import { addressDeliveryType, addressType, userType } from './userReducer'
+import { OrderDetailType } from '../../http/BillHTTP'
 
 export type deliveryLocationType = {
     name: string,
@@ -24,18 +25,6 @@ export type summaryBillDeliveryType = {
     total: number
 }
 
-export type billAtRestaurantType = {
-    _id: string,
-    cart: Array<cartType>,
-    summary: summaryBillAtRestaurantType,
-    staff: string,
-    payment: string,
-    datePayment: string;
-    methodPayment: string;
-    table: string;
-    status: string;
-
-}
 
 export type order_type = {
     id: number,
@@ -45,33 +34,30 @@ export type order_type = {
     payment: boolean,
     methodPayment: string;
     expectedTime: string;
-    user:number,
-    cart:Array<cartItemType>
+    user:userType,
+    order_details:Array<OrderDetailType>,
+    total:number,
+    charges:number
 }
 
-export type billDeliveryResType = {
-    _id: string,
-    dateExpected: string,
-    deliveryLocation: addressDeliveryType,
-    cart: Array<cartItemType>,
-    timeOrder: string,
-    timeFinish: string,
-    staff: staffType,
-    payment: string,
+export type CreateOrderRequest = {
+    address: string,
+    payment: boolean,
     methodPayment: string;
-    status: number;
     expectedTime: string;
-    client: clientType;
-    summary:summaryBillDeliveryType
+    user:number,
+    charges:number
 }
 
-export type address_recipient={
-    address:string,
-    recipient:string,
-    phone:string
+export type UpdateOrderRequest = {
+    address?: string,
+    payment?: boolean,
+    methodPayment?: string;
+    expectedTime?: string;
 }
+
 export interface BillState {
-    value: Array<billDeliveryType>
+    value: []
 }
 
 const initialState: BillState = {

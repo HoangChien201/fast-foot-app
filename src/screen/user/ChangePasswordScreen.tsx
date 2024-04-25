@@ -3,22 +3,19 @@ import { StyleSheet, Text, View, TextInput, Alert } from 'react-native'
 import ButtonCustom from '../../component/ui/ButtonCustom'
 import { Color } from '../../contanst/color'
 import Input from './component/Input'
-import { RouteProp } from '@react-navigation/native'
+import { RouteProp, useNavigation, useRoute } from '@react-navigation/native'
 import { updateUserHTTP } from '../../http/UserHTTP'
 import { navigationType } from '../../component/navigation/ManageNavigation'
 
-interface ChangePasswordSceenProp {
-    route: RouteProp<{ params: { id: string } }, 'params'>,
-    navigation:navigationType
-}
 
-const ChangePasswordSceen: React.FC<ChangePasswordSceenProp> = ({ route,navigation }) => {
-    const idUser = route.params.id
+const ChangePasswordScreen = () => {
+    const route=useRoute()
+    const navigation=useNavigation()
+    const idUser = route.params?.id
     const [valuePassword, setValuePassword] = useState({
         password: '',
         confirm: ''
     })
-
     function onSubmit() {
         try {
             if (!valuePassword.confirm || !valuePassword.password) {
@@ -73,7 +70,7 @@ const ChangePasswordSceen: React.FC<ChangePasswordSceenProp> = ({ route,navigati
     )
 }
 
-export default ChangePasswordSceen
+export default ChangePasswordScreen;
 
 const styles = StyleSheet.create({
     container: {

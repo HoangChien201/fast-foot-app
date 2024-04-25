@@ -4,12 +4,11 @@ import { useSelector } from 'react-redux'
 import { RootState } from '../../store/store'
 import { CURRENCY_VND } from '../../../contanst/FormatCurrency'
 
-const SubTotalCart = () => {
-    const cart_value=useSelector((state:RootState)=>state.cart.value)
+const SubTotalCart = ({total}:{total:number}) => {
     return (
         <View style={styles.subTotalContainer}>
             <Text style={styles.title}>Subtotal</Text>
-            <Text style={styles.price}>{CURRENCY_VND(cart_value.total)}</Text>
+            <Text style={styles.price}>{CURRENCY_VND(total)}</Text>
         </View>
     )
 }

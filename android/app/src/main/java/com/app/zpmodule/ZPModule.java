@@ -31,7 +31,10 @@ public class ZPModule extends ReactContextBaseJavaModule {
             params.putString("transToken", transToken);
             params.putString("appTransID", appTransID);
             params.putString("returnCode", PAYMENTSUCCESS);
+
             sendEvent(mReactContext, "EventPayZalo", params);
+
+            
         }
 
         @Override
@@ -58,7 +61,7 @@ public class ZPModule extends ReactContextBaseJavaModule {
     BaseActivityEventListener activityEventListener = new BaseActivityEventListener(){
         @Override
         public void onNewIntent(Intent intent) {
-            super.onNewIntent(intent);
+            super.onNewIntent(intent); 
         }
     };
 
@@ -87,6 +90,25 @@ public class ZPModule extends ReactContextBaseJavaModule {
     private void sendEvent(ReactContext reactContext, String eventName, WritableMap params) {
         reactContext.getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class)
                 .emit(eventName, params);
+    }
+
+    private int listenerCount = 0;
+
+    @ReactMethod
+    public void addListener(String eventName) {
+        if (listenerCount == 0) {
+            // Set up any upstream listeners or background tasks as necessary
+        }
+
+        listenerCount += 1;
+    }
+
+    @ReactMethod
+    public void removeListeners(Integer count) {
+        listenerCount -= count;
+        if (listenerCount == 0) {
+            // Remove upstream listeners, stop unnecessary background tasks
+        }
     }
 
 

@@ -1,14 +1,15 @@
 import React, { useState } from 'react'
 import { StyleSheet, Text, View, TextInput, TouchableOpacity } from 'react-native'
-import ButtonCustom from '../../component/ui/ButtonCustom'
 import { Color } from '../../contanst/color'
 import { sendMailForgotPassword } from '../../http/UserHTTP'
 import { RootStackParamList, navigationType } from '../../component/navigation/ManageNavigation'
 import { setToken } from '../../helper/AsyncStorageHelper'
 import Input from './component/Input'
 import { StackNavigationProp } from '@react-navigation/stack'
+import { useNavigation } from '@react-navigation/native'
 
-const SendMailScreen = ({ navigation }: { navigation: StackNavigationProp<RootStackParamList> }) => {
+const SendMailScreen = () => {
+    const navigation=useNavigation()
     const [email, setEmail] = useState('')
 
     function onSubmit() {

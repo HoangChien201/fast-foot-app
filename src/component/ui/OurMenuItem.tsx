@@ -7,9 +7,6 @@ import { Image,
 import { Color } from "../../contanst/color";
 
 export default function OurMenuItem({active,name,image}:{active:boolean,name:string,image:any}){
-    function ItemPressHandle(){
-        
-    }
     return (
             <View style={styles.container}>
                 <Image style={styles.image} source={{uri:image}} resizeMode="contain"/>

@@ -55,7 +55,7 @@ const MyTopTasbBar : React.FC<MyTopTasbBarProp> =({ state, descriptors, navigati
                             key={index}
                         >
                             <View style={[styles.option,isFocused && styles.activeOption]}>
-                                <Text style={styles.lableOption}>{label == 'Login'? ' Đăng nhập' :' Đăng kí' }</Text>
+                                <Text style={styles.lableOption}>{label == 'Login'? ' Login' :' Register' }</Text>
                             </View>
                         </TouchableOpacity>
                     );

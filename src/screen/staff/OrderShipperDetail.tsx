@@ -1,33 +1,39 @@
 import React, { useEffect, useState } from 'react'
-import { StyleSheet, Text, View, Image, Button, 
-    Pressable, TextInput, Alert, TouchableOpacity,
-    Linking
+import {
+    StyleSheet, View,
+    Pressable, Alert,
+    FlatList,
+    ScrollView,
+    Text,
 } from 'react-native'
 import MapView, { Marker } from 'react-native-maps';
-import MapViewDirections from 'react-native-maps-directions';
 import { getApps, GetAppResult } from 'react-native-map-link';
 import axios from 'axios';
 
-import { Color } from '../../contanst/color';
 import InformationUser from '../../component/ui/shipper/InformationUser';
 import { RouteProp } from '@react-navigation/native';
-import { billDeliveryResType } from '../../component/store/billDeliveryReducer';
-import { getBillDeliveryHTTP } from '../../http/BillHTTP';
-import { formatLocation } from '../../contanst/FormatAddress';
+import { order_type } from '../../component/store/billDeliveryReducer';
+import { getOneOrderHTTP } from '../../http/BillHTTP';
+import InfomationOrder from '../../component/ui/shipper/InfomationOrder';
+import OrderDetailItem from '../../component/ui/order-complete/OrderDetailItem';
+import ConfirmStaffContainer from '../../component/ui/staff/ConfirmStaffContainer';
+import { OrderTrackingType, getOneOrderTrackingHTTP } from '../../http/OrderTrackingHTTP';
+import ModalBottomTabSheetComponent from '../../component/ui/ModalBottomTabSheetComponent';
 
 const ORIGIN = { latitude: 10.855552, longitude: 106.655658 };
 const DESTINATION = { latitude: 10.837466, longitude: 106.671066 };
 const GOOGLE_MAPS_APIKEY = 'AIzaSyDQx98JXENBCkBNPYl89xN1S8RBtcP87cE';
 
 interface OrderShipperDetailProp {
-    route: RouteProp<{ params: { data: string } }, 'params'>
+    route: RouteProp<{ params: { data: string } }, 'params'>,
+    navigation: any
 }
 
-const OrderShipperDetail: React.FC<OrderShipperDetailProp> = ({ route }) => {
+const OrderShipperDetail: React.FC<OrderShipperDetailProp> = ({ route, navigation }) => {
     //gọi api bill
     //lấy tọa độ của user trong bill
     //hiện bản đồ
-    const idBill = route?.params?.data
+    const idOrderParam = route?.params?.data
 
     const [isModalInformation, setIsModalInfomation] = useState(true)
     const [availableApps, setAvailableApps] = useState<GetAppResult[]>([]);
@@ -35,30 +41,36 @@ const OrderShipperDetail: React.FC<OrderShipperDetailProp> = ({ route }) => {
     const [address, setAddress] = useState('Phường 13, Gò Vấp, Thành phố Hồ Chí Minh, Việt Nam');
     const [coordinates, setCoordinates] = useState({ latitude: '', longitude: '' });
 
-    const [bill, setBill] = useState<billDeliveryResType>()
+    const [orderTracking, setOrderTracking] = useState<OrderTrackingType>()
+    const [order, setOrder] = useState<order_type>()
     useEffect(() => {
         (async () => {
-            const billRes = await getBillDeliveryHTTP(idBill);
-            setBill(billRes)
-            handleGetCoordinates(billRes)
+            const orderTracking = await getOneOrderTrackingHTTP(parseInt(idOrderParam));
+            setOrderTracking(orderTracking)
+            const order = await getOneOrderHTTP(parseInt(idOrderParam));
+
+            setOrder(order)
+
+            handleGetCoordinates(order)
 
         })()
     }, []);
 
 
     //lấy vị trí user
-    const handleGetCoordinates = async (bill: billDeliveryResType) => {
+    const handleGetCoordinates = async (order: order_type) => {
         try {
+            const indexChar=order.address.indexOf('|')
+            const address=order.address.slice(indexChar)
             //lấy tọa độ bản đồ
             const response = await axios.get(
-                `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(`${bill?.deliveryLocation.detail},${bill?.deliveryLocation.ward}
-                ,${bill?.deliveryLocation.district},${bill?.deliveryLocation.city} `)
+                `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(address)
                 }`
             );
 
             if (response.data.length > 0) {
                 const { lat, lon } = response.data[0];
-                setCoordinates({ latitude: parseFloat(lat), longitude: parseFloat(lon) });
+                setCoordinates({ latitude: lat, longitude: lon });
 
                 const result = await getApps({
                     latitude: lat,
@@ -80,7 +92,28 @@ const OrderShipperDetail: React.FC<OrderShipperDetailProp> = ({ route }) => {
         }
     };
     //
-    
+
+    function InformationContainer() {
+        if (!order) return <Text>Loading !!!</Text>
+        return (
+            <ScrollView
+                style={styles.informationContainer}
+                showsVerticalScrollIndicator={false}
+            >
+                <View >
+                    <InformationUser user={order.user} />
+                    <InfomationOrder order={order} />
+                    {
+                        orderTracking && ![4, 5].includes(orderTracking?.status) &&
+                        <ConfirmStaffContainer order_id={order.id} closeModal={() => { navigation.goBack() }} />
+                    }
+
+                </View>
+            </ScrollView>
+        )
+    }
+
+
     return (
         <View style={styles.container}>
             {availableApps.map(({ icon, name, id, open }) => (
@@ -107,39 +140,8 @@ const OrderShipperDetail: React.FC<OrderShipperDetailProp> = ({ route }) => {
                 </Pressable>
             ))}
 
-            <View style={styles.informationContainer}>
-                {
-                    bill &&
-                    <View>
-                        <InformationUser bill={bill}/>
-                        <View style={styles.informationShipmentContainer}>
-                            <View style={styles.shipmentWrapper}>
-                                <Text style={styles.shipmentText}>Shipment #</Text>
-                                <Text style={styles.idText}>{bill._id}</Text>
-                            </View>
-                        </View>
+            <ModalBottomTabSheetComponent children={InformationContainer()} snapPointsProp={['4%','40%','50%']} />
 
-                        <View style={styles.locationDeliveryContainer}>
-                            <View style={styles.addressWrapper}>
-                                <Image
-                                    source={require('../../assets/images/icon/icon-restaurant.png')}
-                                    style={styles.icon}
-                                    resizeMode='contain' />
-                                <Text style={styles.address}>Quán</Text>
-                            </View>
-
-                            <View style={styles.addressWrapper}>
-                                <Image
-                                    source={require('../../assets/images/icon/icon-location.png')}
-                                    style={styles.icon}
-                                    resizeMode='contain' />
-                                <Text style={styles.address}>{formatLocation(bill.deliveryLocation)}</Text>
-
-                            </View>
-                        </View>
-                    </View>
-                }
-                </View>
 
 
         </View>
@@ -154,7 +156,7 @@ const styles = StyleSheet.create({
     },
     informationContainer: {
         backgroundColor: '#fff',
-        height: 300,
+        height: '100%',
         width: '100%',
         position: "absolute",
         bottom: 0,
@@ -162,50 +164,6 @@ const styles = StyleSheet.create({
         borderTopLeftRadius: 15,
         paddingHorizontal: 24
 
-    },
-    informationShipmentContainer: {
-        height: 80,
-        width: '100%',
-        borderColor: '#000',
-        borderTopWidth: 1,
-        borderBottomWidth: 1,
-        justifyContent: "center"
-    },
-    shipmentWrapper: {
-        alignItems: 'center'
-    },
-    shipmentText: {
-        color: "#000",
-        fontFamily: "Klarna Text",
-        fontSize: 14,
-        fontStyle: "normal",
-        fontWeight: "700",
-    },
-    idText: {
-        color: "#6D3805",
-        fontFamily: "Klarna Text",
-        fontSize: 18,
-        fontStyle: "normal",
-        fontWeight: "700",
-    },
-    locationDeliveryContainer: {},
-    addressWrapper: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        marginVertical: 10,
-    },
-    address: {
-        color: Color.primary200,
-        fontFamily: "Klarna Text",
-        fontSize: 15,
-        fontStyle: "normal",
-        fontWeight: "400",
-        flex: 1
-    },
-    icon: {
-        width: 24,
-        height: 24,
-        marginRight: 10
     },
 
 })

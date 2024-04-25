@@ -1,5 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit'
-import { cartType } from './cartReducer'
+import { cartType } from './modalAddCartReducer'
 import { billAtRestaurantType, billDeliveryType } from './billDeliveryReducer'
 
 export type formLogin = {

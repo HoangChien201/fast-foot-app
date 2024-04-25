@@ -26,7 +26,7 @@ export const registerRemoteNotificationsEvent = () => {
         console.error(event);
     });
 }
-export const postLocalNotification=(notification:Notification)=>{
+export const postLocalNotification=(notification:any)=>{
     Notifications.postLocalNotification({
         title: notification.title,
         body: notification.body,

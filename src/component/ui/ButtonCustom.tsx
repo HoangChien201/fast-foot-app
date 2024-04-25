@@ -3,7 +3,7 @@ import React from 'react'
 import { Color } from '../../contanst/color'
 
 interface ButtonCustomProps{
-    children:string,
+    children?:string,
     textColor?:string,
     onPress?:any,
     style?:any

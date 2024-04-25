@@ -1,14 +1,26 @@
 import { StyleSheet, Text, View, Image, Modal, TouchableOpacity,FlatList } from 'react-native'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 
 import CalendarPicker, { CalendarPickerProps, MomentParsable } from 'react-native-calendar-picker';
 import { useSelector } from 'react-redux';
 import { RootState } from '../store/store';
 import CartItem from './cart/CartItem';
+import { userType } from '../store/userReducer';
+import { getCartByUserHttp } from '../../http/CartHTTP';
+import { cartItemType, cartResponeType } from '../store/modalAddCartReducer';
 
 const ModalListCart = ({ isVisible, setVisible }: { isVisible: boolean, setVisible: any }) => {
-    const listCart = useSelector((state: RootState) => state.cart.value)
+    const user:userType=useSelector((state:RootState)=>state.user.value)
+    const [cart,setCart]=useState<Array<cartItemType>>()
+    async function getCart() {
+        const respone= await getCartByUserHttp(user.id)
+        setCart(respone.cart)
+    }
 
+    useEffect(()=>{
+        getCart()
+    },[])
+    
     return (
         <Modal
             visible={isVisible}
@@ -19,16 +31,15 @@ const ModalListCart = ({ isVisible, setVisible }: { isVisible: boolean, setVisib
                 <TouchableOpacity style={styles.iconBack} onPress={()=>setVisible(false)}>
                     <Image source={require('../../assets/images/icon/icon-back.png')} style={{ margin: 16 }} />
                 </TouchableOpacity>
-                <View>
+                <View style={{flex:1}}>
                     <FlatList
-                        data={listCart}
+                        data={cart}
                         renderItem={({item})=>{
                             return (
                                 <CartItem data={item} onlyShow={true}/>
                             )
                         }}
-                        keyExtractor={(item)=>item._id}
-                        scrollEnabled={false}
+                        keyExtractor={(item)=>item.product.id.toString()}
                     />
                 </View>
             </View>

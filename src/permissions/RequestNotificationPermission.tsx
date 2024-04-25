@@ -7,11 +7,10 @@ export default async function RequestNotificationPermission() {
           response => {
             if (!response) {
               PermissionsAndroid.request('android.permission.POST_NOTIFICATIONS', {
-                title: 'Thông báo',
+                title: 'Notification',
                 message:
-                  'Ứng dụng cần truy cập thông báo ' +
-                  'Bạn có thể cập nhật',
-                buttonNeutral: 'Nhắc tôi sau',
+                  'The app needs to access notifications ',
+                buttonNeutral: 'Remind me later',
                 buttonNegative: 'Cancel',
                 buttonPositive: 'OK',
               })

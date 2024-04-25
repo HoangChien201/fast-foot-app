@@ -18,15 +18,14 @@ import Loading from '../../component/ui/Loading';
 
 export default function MenuScreen() {
     const listProduct = useSelector((state: RootState) => state.product.value)
-    const [visibleModalAdd, setVisibleModalAdd] = useState('');
     const [isLoading,setIsLoading]=useState(false)
-    const [categoryCurrent,setCategoryCurrent]=useState('')
-    const [categories, setCategories] = useState<AxiosResponse<CategoryType[], any>>()
+    const [categoryCurrent,setCategoryCurrent]=useState<number>()
+    const [categories, setCategories] = useState<CategoryType[]>()
 
     async function getCategoryAPI() {
         setIsLoading(true)
 
-        const categories: AxiosResponse<CategoryType[], any> = await getCategory()
+        const categories: CategoryType[] = await getCategory()
         setCategories([...categories])
 
         setIsLoading(false)
@@ -36,13 +35,7 @@ export default function MenuScreen() {
         getCategoryAPI()
     }, [])
 
-    
-
-    function OpenModalAdd(id: string): void {
-        setVisibleModalAdd(id)
-    }
-
-    const MenuItem = ({ id,name, image }: {id:string, name: string, image: any }) => {
+    const MenuItem = ({ id,name, image }: {id:number, name: string, image: any }) => {
         return (
             <TouchableOpacity style={styles.ourMenuItem} onPress={()=>setCategoryCurrent(id)}>
                 <OurMenuItem name={name} image={image} active={id===categoryCurrent}/>
@@ -50,10 +43,10 @@ export default function MenuScreen() {
         )
     }
 
-    const ProductItemScreen = ({ product, type, addPress }: { product: productType, type: string, addPress: any }) => {
+    const ProductItemScreen = ({ product, type }: { product: productType, type: string }) => {
         return (
             <View style={styles.productItem}>
-                <ProductItem product={product} type={type} addPress={addPress} />
+                <ProductItem product={product} type={type} />
             </View>
         )
     }
@@ -62,12 +55,11 @@ export default function MenuScreen() {
     return (
         <View style={styles.container}>
             <Loading isLoading={isLoading}/>
-            <ModalAddCart visible={visibleModalAdd} setVisible={setVisibleModalAdd} />
 
             <Search editable={false}/>
             <View style={styles.ourMenuContainer}>
                 <View style={styles.titleContainer}>
-                    <Text style={styles.title}>Danh mục</Text>
+                    <Text style={styles.title}>Category</Text>
                     <ViewAll />
                 </View>
                 {
@@ -85,7 +77,7 @@ export default function MenuScreen() {
                 }
             </View>
             <View style={styles.featuredContainer}>
-                <Text style={styles.title}>Mục nổi bật</Text>
+                <Text style={styles.title}>Featured item</Text>
                 <FlatList
                     data={
                         !categoryCurrent ? listProduct :
@@ -94,7 +86,7 @@ export default function MenuScreen() {
                     horizontal={false}
                     numColumns={2}
                     renderItem={({ item }) => {
-                        return <ProductItemScreen product={item} type='colunm' addPress={OpenModalAdd} />
+                        return <ProductItemScreen product={item} type='colunm' />
                     }}
                     keyExtractor={item => item.id.toString()}
                     columnWrapperStyle={styles.flatListRow}
@@ -108,6 +100,7 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         padding: 20,
+        paddingBottom:0,
         backgroundColor: '#fff',
 
     },
@@ -128,13 +121,15 @@ const styles = StyleSheet.create({
         shadowRadius: 5,
         borderRadius: 10,
         margin: 5,
-        overflow: 'hidden'
+        overflow: 'hidden',
+        justifyContent:'center'
     },
     titleContainer: {
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'space-between',
-        height: 50,
+        minHeight: 50,
+        maxHeight:70,
         paddingVertical: 10
     },
     title: {
@@ -143,7 +138,6 @@ const styles = StyleSheet.create({
         color: '#000',
     },
     featuredContainer: {
-        marginVertical: 10,
         flex: 1,
     },
     productItem: {

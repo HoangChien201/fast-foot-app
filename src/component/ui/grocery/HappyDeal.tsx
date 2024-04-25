@@ -10,8 +10,8 @@ const HappyDeal = () => {
                 style={styles.wrapper_full}
             >
                 <View style={{ width: '50%' }}>
-                    <Text style={[styles.heading, { color: "#fff" }]}>Giáng sinh</Text>
-                    <Text style={[styles.description, { color: '#fff' }]} >Chào đón mùa lễ hội với những món ăn đặc biệt chỉ có trong mùa Giáng Sinh. Hãy đặt ngay để trải nghiệm hương vị độc đáo và đẳng cấp.</Text>
+                    <Text style={[styles.heading, { color: "#fff" }]}>Christmas</Text>
+                    <Text style={[styles.description, { color: '#fff' }]} >Welcome the festive season with special dishes available during the Christmas season. Order now to experience the unique and classy fragrance.</Text>
                 </View>
                 <Image source={require('../../../assets/images/advertisement/chirstmas.png')} />
             </LinearGradient>

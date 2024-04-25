@@ -8,11 +8,16 @@ export type RequestCreateOrderZalo={
       'description': string;
 }
 
-export async function CreateOrder(params:RequestCreateOrderZalo) {
+
+export type ResponeCreateOrderZalo={
+    zp_trans_token:string,
+    return_code:number
+}
+export async function CreatePaymentOrder(params:RequestCreateOrderZalo) {
     try {
         const axiosInstance=AxiosInstance();
         const url='/payment-zalo/create-order'
-        const respone= axiosInstance.post(url,params)
+        const respone:ResponeCreateOrderZalo= await axiosInstance.post(url,params)
         return respone
     } catch (error) {
         console.log('create order zalo lỗi');

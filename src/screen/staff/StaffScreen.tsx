@@ -2,11 +2,11 @@ import { Modal, StyleSheet, Text, View } from 'react-native'
 import React, { useState } from 'react'
 import { ParamListBase, RouteProp } from '@react-navigation/native'
 import UnConfirmComponent from './UnConfirmComponent'
-import ConfirmComponent from './ConfirmedComponent'
 import DoneComponent from './DoneComponent'
 import { GetAOrderTrackingRequest } from '../../http/OrderTrackingHTTP'
 import OrderStaffDetailComponent from './OrderStaffDetailComponent'
 import DeliveringStaffComponent from './DeliveringStaffComponent'
+import ConfirmedComponent from './ConfirmedComponent'
 
 const StaffScreen = ({ route }: { route: RouteProp<ParamListBase> }) => {
     const nameRoute = route.name
@@ -16,7 +16,7 @@ const StaffScreen = ({ route }: { route: RouteProp<ParamListBase> }) => {
             case 'UnConfirmScreen':
                 return <UnConfirmComponent orderStaffOnPressHandle={OrderStaffOnPressHandle}/>
             case 'ConfirmedScreen':
-                return <ConfirmComponent orderStaffOnPressHandle={OrderStaffOnPressHandle}/>
+                return <ConfirmedComponent orderStaffOnPressHandle={OrderStaffOnPressHandle}/>
             case 'DeliveringScreen':
                 return <DeliveringStaffComponent orderStaffOnPressHandle={OrderStaffOnPressHandle}/>
             case 'DoneScreen':

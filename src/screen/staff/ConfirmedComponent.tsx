@@ -4,7 +4,7 @@ import { OrderTrackingType, getOrderTrackingConfirmedHTTP } from '../../http/Ord
 import { useIsFocused } from '@react-navigation/native'
 import OrderStaffItem from '../../component/ui/staff/OrderStaffItem'
 
-const ConfirmComponent = ({orderStaffOnPressHandle}:{orderStaffOnPressHandle:any}) => {
+const ConfirmedComponent = ({orderStaffOnPressHandle}:{orderStaffOnPressHandle:any}) => {
   const [data,setData]=useState<Array<OrderTrackingType>>([])
   const isFocus=useIsFocused()
   async function getOrderTrackingConfirmedAPI() {
@@ -32,6 +32,6 @@ const ConfirmComponent = ({orderStaffOnPressHandle}:{orderStaffOnPressHandle:any
   )
 }
 
-export default ConfirmComponent
+export default ConfirmedComponent
 
 const styles = StyleSheet.create({})

@@ -4,6 +4,7 @@ import ProfileScreen from "../../screen/grocery/ProfileScreen"
 import Icon from 'react-native-vector-icons/FontAwesome'
 import HomeShipperScreen from "../../screen/staff/HomeShipperScreen"
 import ProfileStaffScreen from "../../screen/staff/ProfileStaffScreen"
+import React from "react"
 
 enum ShipperRootBottomTabEnum{
     HomeShipperScreen="HomeShipperScreen",
@@ -23,8 +24,9 @@ export const ShipperRootBottomTabScreens=[
         name:ShipperRootBottomTabEnum.HomeShipperScreen,
         component:HomeShipperScreen,
         options:{
-            title:'Shipment Orders',
-            tabBarIcon:({color}:{color:string})=>{return <Icon name='home' size={20} color={color}/>}
+            headerShown:false,
+            tabBarIcon:({color}:{color:string})=>{return <Icon name='home' size={20} color={color}/>},
+            
         }
     },
     

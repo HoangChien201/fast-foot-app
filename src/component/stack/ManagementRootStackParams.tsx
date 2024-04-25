@@ -1,3 +1,4 @@
+import React from "react"
 import StaffDetailScreen from "../../screen/manager/StaffDetailScreen"
 import StaffsScreen from "../../screen/manager/StaffsScreen"
 import IconEntypo from 'react-native-vector-icons/Entypo'

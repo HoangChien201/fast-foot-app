@@ -73,7 +73,7 @@ const ExpectedTime = ({updateValuePayment}:{updateValuePayment:any}) => {
     return (
         <View style={styles.container}>
             
-            <Text style={styles.title}>Ngày và thời gian muốn nhận</Text>
+            <Text style={styles.title}>Expected date & Time</Text>
             <TouchableOpacity onPress={()=>setIsCalendarVisible(true)}>
                 <View style={styles.selectDateContainer}>
                     <View style={{ justifyContent: 'space-between', flexDirection: 'row' }}>

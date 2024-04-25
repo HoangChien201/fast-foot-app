@@ -2,17 +2,12 @@ import { Alert, StyleSheet, Text, TextInput, View } from 'react-native'
 import React, { useCallback, useState,useMemo, useEffect } from 'react'
 import ButtonCustom from '../../component/ui/ButtonCustom'
 import { Color } from '../../contanst/color'
-import { RouteProp } from '@react-navigation/native'
-import { navigationType } from '../../component/navigation/ManageNavigation'
+import { RouteProp, useNavigation, useRoute } from '@react-navigation/native'
 import { validateOTP } from '../../http/UserHTTP'
 
-interface SendOTPScreenProp {
-  route: RouteProp<{ params: { email: string } }, 'params'>
-  navigation: navigationType
-}
-
-
-const SendOTPScreen: React.FC<SendOTPScreenProp> = ({ route, navigation }) => {
+const SendOTPScreen= ( ) => {
+  const route = useRoute()
+  const navigation=useNavigation()
   const email = route.params?.email
   const [duration, setDuration] = useState(60)
   const [valueOTP, setValueOTP] = useState({

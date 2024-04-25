@@ -1,11 +1,10 @@
 import { StyleSheet, Text, View } from 'react-native'
-import React, { useState } from 'react'
-import { billDeliveryResType, order_type } from '../../store/billDeliveryReducer'
-import { formatLocation } from '../../../contanst/FormatAddress'
+import React, {  } from 'react'
 import { RootState } from '../../store/store'
 import { useSelector } from 'react-redux'
+import { order_type } from '../../store/billDeliveryReducer'
 
-const ShippingDetail = ({valueBill}:{valueBill:order_type | undefined}) => {
+const ShippingDetail = ({valueBill}:{valueBill:order_type| undefined}) => {
     const user=useSelector((state:RootState)=>state.user.value)
     const address=valueBill?.address
     function ShippingDetailRow({ label, content }: { label?: string, content?: string | number | null }) {

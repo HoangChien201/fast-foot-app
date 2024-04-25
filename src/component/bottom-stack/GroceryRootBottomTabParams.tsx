@@ -1,8 +1,8 @@
-import { Color } from "../../contanst/color"
+import React from "react"
+
 import CartScreen from "../../screen/grocery/CartScreen"
 import HomeScreen from "../../screen/grocery/HomeScreen"
 import MenuScreen from "../../screen/grocery/MenuScreen"
-import ProfileScreen from "../../screen/grocery/ProfileScreen"
 import VoucherScreen from "../../screen/grocery/VoucherScreen"
 
 import Icon from 'react-native-vector-icons/FontAwesome'
@@ -55,8 +55,6 @@ export const GroceryRootBottomTabScreens=[
             headerShown:false,
             title:'Cart',
             tabBarIcon:({color}:{color:string})=>{return <Icon name='shopping-basket' size={20} color={color}/>},
-            tabBarBadge: 0, 
-            tabBarBadgeStyle: { backgroundColor: 'red',fontSize:12 }
         }
     },
     {
@@ -66,17 +64,6 @@ export const GroceryRootBottomTabScreens=[
         options:{
             headerShown:false,
             title:'Account',
-            tabBarIcon:({color}:{color:string})=>{return <Icon name='user-circle' size={20} color={color}/>},
-            
-        }
-    },
-    {
-        id:Math.random()+""+Date,
-        name:GroceryRootBottomTabEnum.VoucherScreen,
-        component:VoucherScreen,
-        options:{
-            headerShown:false,
-            title:'Vourcher',
             tabBarIcon:({color}:{color:string})=>{return <Icon name='user-circle' size={20} color={color}/>},
             
         }

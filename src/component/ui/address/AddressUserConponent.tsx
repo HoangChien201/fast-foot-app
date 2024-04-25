@@ -5,7 +5,7 @@ import { RootState } from '../../store/store'
 
 const AddressUserConponent = () => {
   const user=useSelector((state:RootState)=>state.user.value)
-  const address=user.address
+  const address=user?.address
   
   return (
     <TouchableOpacity style={styles.container}>

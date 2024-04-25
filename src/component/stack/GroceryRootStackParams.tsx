@@ -1,12 +1,9 @@
 import MessageScreen from "../../screen/grocery/MessageScreen"
-import OrderDetailScreen from "../../screen/grocery/OrderDetailScreen"
 import SearchScreen from "../../screen/grocery/SearchScreen"
-import LoginScreen from "../../screen/user/LoginScreen"
 import ManageAddressScreen from "../../screen/user/ManageAddressScreen"
 import ManageInformationUser from "../../screen/user/ManageInformationUser"
 import OrderCompleteScreen from "../../screen/user/OrderCompleteScreen"
 import PaymentScreen from "../../screen/user/PaymentScreen"
-import SignUpScreen from "../../screen/user/SignUpScreen"
 import WelcomeScreen from "../../screen/user/WelcomeScreen"
 import GroceryBottomTab from "../bottom-stack/GroceryBottomTab"
 
@@ -52,7 +49,7 @@ export const GroceryRootStackScreens=[
         name:GroceryRootStackEnum.PaymentScreen,
         component:PaymentScreen,
         options:{
-            title:'Thanh toán'
+            title:'Payment'
         }
     },
     {
@@ -60,7 +57,7 @@ export const GroceryRootStackScreens=[
         name:GroceryRootStackEnum.ManageAddressScreen,
         component:ManageAddressScreen,
         options:{
-            title:'Địa chỉ'
+            title:'Address'
         }
     },
     {
@@ -68,7 +65,7 @@ export const GroceryRootStackScreens=[
         name:GroceryRootStackEnum.OrderCompleteScreen,
         component:OrderCompleteScreen,
         options:{
-            title:'Đơn hàng chi tiết'
+            title:'Detail Order'
         }
     },
     {
@@ -76,7 +73,7 @@ export const GroceryRootStackScreens=[
         name:GroceryRootStackEnum.ManageInformationUser,
         component:ManageInformationUser,
         options:{
-            title:'Chỉnh sửa thông tin',
+            title:'Your Profile',
         }
     },
     {
@@ -100,7 +97,7 @@ export const GroceryRootStackScreens=[
         name:GroceryRootStackEnum.MessageScreen,
         component:MessageScreen,
         options:{
-            title:'Hỗ trợ',
+            title:'Support',
         }
     },
 ]

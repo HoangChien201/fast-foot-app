@@ -3,41 +3,33 @@ import React, { useEffect, useLayoutEffect, useState } from 'react'
 import * as Progress from 'react-native-progress';
 
 import { Color } from '../../contanst/color'
-import IconEntypo from 'react-native-vector-icons/Entypo'
 import { NavigationProp, ParamListBase, RouteProp, useRoute } from '@react-navigation/native'
-import CartItem from '../../component/ui/cart/CartItem'
-import { billDeliveryResType, billDeliveryType, order_type } from '../../component/store/billDeliveryReducer'
+import {  order_type } from '../../component/store/billDeliveryReducer'
 import DeliveryStatusComponent from '../../component/ui/order-complete/DeliveryStatusComponent';
-import { product } from '../../contanst/contanst';
-import ProductItem from '../../component/ui/ProductItem';
 import ShippingDetail from '../../component/ui/order-complete/ShippingDetail';
-import OrderSummary from '../../component/ui/payment/OrderSummary';
-import { getOrderHTTP } from '../../http/BillHTTP';
-import { socket } from '../../helper/SocketHandle';
-import { userType } from '../../component/store/userReducer';
+import { getOneOrderHTTP } from '../../http/BillHTTP';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../component/store/store';
-import { postLocalNotification } from '../../notifications/Events';
 interface OrderCompleteScreenProp {
   navigation: NavigationProp<ParamListBase>
 }
 const OrderCompleteScreen: React.FC<OrderCompleteScreenProp> = ({ navigation }) => {
-  const router: RouteProp<{ params: { bill_id: number } }, 'params'> = useRoute()
   const [valueBill, setValueBill] = useState<order_type>()
   const [isLoading, setIsLoading] = useState(true)
 
-  const bill_id = router?.params?.bill_id
+  const orderTracking=useSelector((state:RootState)=>{return state.orderTracking.value})
 
-  
+  const {order_id}=orderTracking
 
   useEffect(() => {
     (async function getBillDelivery() {
-      const bill = await getOrderHTTP(bill_id);
+      setIsLoading(true)
+      const bill = await getOneOrderHTTP(order_id);
       setValueBill(bill)
       setIsLoading(false)
     })()
 
-  }, [bill_id])
+  }, [order_id])
 
   useLayoutEffect(() => {
     navigation.setOptions({
@@ -45,50 +37,11 @@ const OrderCompleteScreen: React.FC<OrderCompleteScreenProp> = ({ navigation }) 
     })
   }, [])
 
-  function Product() {
-    return (
-      <View style={styles.productContainer}>
-        <Text style={styles.title}>Product</Text>
-        <FlatList
-          data={product}
-          renderItem={({ item }) => {
-            return (
-              <View style={styles.productItem}>
-                <ProductItem product={item} type='row' />
-              </View>
-            )
-          }}
-        />
-      </View>
-    )
-  }
-
-
-
   return (
     <ScrollView>
       <View style={styles.container}>
-        <DeliveryStatusComponent bill_id={bill_id} />
-        {/* <View style={styles.userContainer}>
-          <View style={styles.flexRow}>
-            <View style={styles.avatarContainer}>
-              {
-                valueBill &&
-                <Image
-                  source={{ uri: valueBill.staff.avatar }}
-                  style={styles.avatar}
-                  resizeMode='cover'
-                />
-              }
-
-            </View>
-            <Text style={styles.nameUser}>{valueBill && valueBill?.staff.fullname}</Text>
-          </View>
-
-          <TouchableOpacity style={styles.iconPhoneContainer}>
-            <Image style={styles.iconPhone} source={require('../../assets/images/icon/telephone-call.png')} />
-          </TouchableOpacity>
-        </View> */}
+        <DeliveryStatusComponent order_id={order_id} />
+        
         <ShippingDetail valueBill={valueBill} />
         {/* <OrderSummary /> */}
       </View>

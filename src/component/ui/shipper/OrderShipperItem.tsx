@@ -1,15 +1,15 @@
 import { Image, StyleSheet, Text, View, Pressable } from 'react-native'
 import React from 'react'
 import { Color } from '../../../contanst/color'
-import { billDeliveryType } from '../../store/billDeliveryReducer'
 import { NavigationProp, ParamListBase, useNavigation } from '@react-navigation/native'
-import { formatLocation } from '../../../contanst/FormatAddress'
+import { OrderTrackingType } from '../../../http/OrderTrackingHTTP'
+import { Status } from '../../../contanst/FormatStatus'
 
-const OrderShipperItem = ({ bill }: { bill: billDeliveryType }) => {
+const OrderShipperItem = ({ orderTracking }: { orderTracking:OrderTrackingType }) => {
     const navigation: NavigationProp<ParamListBase> = useNavigation()
     function onPress() {
         navigation.navigate('OrderShipperDetailScreen', {
-            data: bill._id
+            data: orderTracking.order.id
         })
     }
     return (
@@ -19,23 +19,23 @@ const OrderShipperItem = ({ bill }: { bill: billDeliveryType }) => {
 
                     <View style={styles.flexRow}>
                         <View style={styles.shipmentContainer}>
-                            <Text style={styles.title}>Shipment number</Text>
-                            <Text style={styles.shipmentNumber}>1234</Text>
+                            <Text style={styles.title}>ID</Text>
+                            <Text style={styles.shipmentNumber}>{orderTracking.order.id}</Text>
                         </View>
                         <View style={styles.statusOrderContainer}>
-                            <Text style={styles.status}>On the way</Text>
+                            <Text style={styles.status}>{Status(orderTracking.status)}</Text>
                         </View>
                     </View>
 
                     <View style={styles.deliveryAddressContainer}>
                         <Text style={styles.title}>Delivery Address</Text>
-                        <View style={{ flexDirection: 'row', marginTop: 5 }}>
+                        <View style={{ flexDirection: 'row', marginTop: 5,alignItems:'center' }}>
                             <Image
                                 source={require('../../../assets/images/icon/icon-location.png')}
                                 style={styles.iconLocation}
                                 resizeMode='contain'
                             />
-                            <Text style={styles.address}>{formatLocation(bill.deliveryLocation)}</Text>
+                            <Text style={styles.address}>{orderTracking.order.address.replace('|','\n')}</Text>
                         </View>
 
                     </View>
@@ -94,6 +94,7 @@ const styles = StyleSheet.create({
         backgroundColor: Color.primary350,
         marginTop: 10,
         elevation: 8,
+        justifyContent:'center'
 
     },
     iconLocation: {

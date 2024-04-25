@@ -1,13 +1,6 @@
+import { locationDeliveryType } from "../component/store/locationDelireryReducer";
 import { addressDeliveryType, addressType, userType } from "../component/store/userReducer";
 
-export function FormatAddressRecipient(user:userType):string{
-    if(user?.address){
-        return `${user.fullname}, ${user.phone}\n${user.address}`
-    }
-    return ''
-
-}
-
-export function formatLocation(location:addressDeliveryType){
-    return `${location.detail}, ${location.ward}, ${location.district}, ${location.city}`
+export function FormatAddressRecipient(location:locationDeliveryType){
+    return `${location.nameRecipient} ${location.phone}|${location.detail}, ${location.ward}, ${location.district}, ${location.province}`
 }

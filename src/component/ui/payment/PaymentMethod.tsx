@@ -5,9 +5,9 @@ import { Color } from '../../../contanst/color'
 type MethodType={id:string, name: string, icon: any }
 const methods:MethodType[] = [
     {
-        id:'momo',
-        name: 'Thanh toán bằng ví Momo',
-        icon: require('../../../assets/images/icon/icon_momo.png')
+        id:'zalo',
+        name: 'Thanh toán bằng ví Zalo',
+        icon: require('../../../assets/images/icon/icon-zalo.png')
     },
     {
         id:'cash',
@@ -45,7 +45,7 @@ const PaymentMethod = ({updateValuePayment}:{updateValuePayment:any}) => {
     }
     return (
         <View style={styles.container}>
-            <Text style={styles.title}>Phương thức thanh toán</Text>
+            <Text style={styles.title}>Payment Method</Text>
             <View>
                 <FlatList
                     data={methods}

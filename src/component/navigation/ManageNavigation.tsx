@@ -6,32 +6,37 @@ import StaffStack from '../stack/StaffStack'
 import GroceryStack from '../stack/GroceryStack'
 import AuthenticationUserScreen from '../../screen/user/AuthenticationUserScreen'
 import { StackNavigationProp } from '@react-navigation/stack'
+import ShipperStack from '../stack/ShipperStack'
+import ManageAddressScreen from '../../screen/user/ManageAddressScreen'
 
-export type navigationType=StackNavigationProp<RootStackParamList>
-type routeType=RouteProp<{ params: { value: string } }, 'params'>
+export type navigationType = StackNavigationProp<RootStackParamList>
+type routeType = RouteProp<{ params: { value: string } }, 'params'>
 export type RootStackParamList = {
   SendOTPScreen: { email: string } | undefined,
-  SearchScreen:undefined,
+  SearchScreen: undefined,
 };
 const ManageNavigation = () => {
-    const user = useSelector((state: RootState) => state.user.value)
+  const user = useSelector((state: RootState) => state.user.value)
 
-  const StackActive = useCallback(()=>{
-    
-    switch (user?.role){  
+  const StackActive = useCallback(() => {
+
+    switch (user?.role) {
       case 2:
-        return <StaffStack/>
+        return <StaffStack />
+      case 3:
+        return <ShipperStack />
       default:
-        return <GroceryStack/>
+        return <GroceryStack />
     }
-  },[user])
+  }, [user])
 
   return (
+
     <NavigationContainer>
       {
-        !user ? <AuthenticationUserScreen/> 
-        :
-        <StackActive/>
+        !user ? <AuthenticationUserScreen />
+          :
+          <StackActive />
       }
     </NavigationContainer>
   )

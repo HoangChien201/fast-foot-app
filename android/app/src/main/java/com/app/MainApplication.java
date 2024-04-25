@@ -1,6 +1,5 @@
 package com.app;
 import com.app.zpmodule.PayZaloBridge;
-import com.reactlibrary.RNMomosdkPackage;
 
 import android.app.Activity;
 import android.app.Application;
@@ -14,6 +13,11 @@ import com.facebook.react.defaults.DefaultNewArchitectureEntryPoint;
 import com.facebook.react.defaults.DefaultReactNativeHost;
 import com.facebook.soloader.SoLoader;
 import java.util.List;
+import com.facebook.react.bridge.Arguments;
+import com.facebook.react.bridge.ReactApplicationContext;
+import com.facebook.react.bridge.ReactMethod;
+
+
 //notification
 import com.wix.reactnativenotifications.RNNotificationsPackage;
 
@@ -21,9 +25,13 @@ import com.wix.reactnativenotifications.RNNotificationsPackage;
 import vn.zalopay.sdk.Environment;
 import vn.zalopay.sdk.ZaloPaySDK;
 import vn.zalopay.sdk.listeners.PayOrderListener;
+import vn.zalopay.sdk.ZaloPayError;
 
 public class MainApplication extends Application implements ReactApplication {
-
+private ReactApplicationContext mReactContext;
+    final String PAYMENTSUCCESS = "1";
+    final String PAYMENTFAILED = "-1";
+    final String PAYMENTCANCELED = "4";
   private final ReactNativeHost mReactNativeHost =
       new DefaultReactNativeHost(this) {
         @Override
@@ -74,6 +82,9 @@ public class MainApplication extends Application implements ReactApplication {
 
       // Khởi tạo ZPDK
       ZaloPaySDK.init(2554, Environment.SANDBOX);
+
+    
   }
+
 
 }

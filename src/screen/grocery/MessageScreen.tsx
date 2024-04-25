@@ -7,6 +7,7 @@ import { useSelector } from 'react-redux'
 import { RootState } from '../../component/store/store'
 import { getMessageHttp } from '../../http/MessageHTTP'
 import { socket } from '../../helper/SocketHandle'
+import { postLocalNotification } from '../../notifications/Events'
 
 const MessageScreen = () => {
   const user:userType=useSelector((state:RootState)=>state.user.value)

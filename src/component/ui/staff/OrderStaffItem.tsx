@@ -7,8 +7,7 @@ import { OrderTrackingType } from '../../../http/OrderTrackingHTTP'
 import { Status } from '../../../contanst/FormatStatus'
 
 const OrderStaffItem = ({ order_tracking,onPressItem }: { order_tracking: OrderTrackingType,onPressItem?:any }) => {
-    const navigation: NavigationProp<ParamListBase> = useNavigation()
-    const {status,lastUpdateTime}={...order_tracking}
+    const {status}={...order_tracking}
 
     const {
         fullname:fullnameReceicer ,
@@ -47,7 +46,7 @@ const OrderStaffItem = ({ order_tracking,onPressItem }: { order_tracking: OrderT
                                 style={styles.iconLocation}
                                 resizeMode='contain'
                             />
-                            <Text style={styles.address}>{address}</Text>
+                            <Text style={styles.address}>{address.replace('|','\n')}</Text>
                         </View>
 
                     </View>

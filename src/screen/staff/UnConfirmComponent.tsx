@@ -1,7 +1,7 @@
 import { FlatList, StyleSheet, Text, View } from 'react-native'
 import React, { useEffect, useState } from 'react'
-import OrderShipperItem from '../../component/ui/shipper/OrderShipperItem'
-import { order_type } from '../../component/store/billDeliveryReducer'
+import { ALERT_TYPE,Toast } from 'react-native-alert-notification'
+
 import OrderStaffItem from '../../component/ui/staff/OrderStaffItem'
 import { OrderTrackingType, getOrderTrackingUnConfirmHTTP } from '../../http/OrderTrackingHTTP'
 import { useIsFocused } from '@react-navigation/native'
@@ -23,8 +23,14 @@ const UnConfirmComponent = ({orderStaffOnPressHandle}:{orderStaffOnPressHandle:a
     socket.on('notification-staff',(notification)=>{
       getOrderTrackingUnConfirmAPI()
       postLocalNotification({
-        title:"Đơn hàng mới",
-        body:"Bạn có đơn hàng mới"
+        title:"Fast food",
+        body:"You have new order"
+      })
+
+      Toast.show({
+        type: ALERT_TYPE.SUCCESS,
+        textBody: 'FastFood',
+        title: 'You have new order',
       })
     })
   },[isFocus])

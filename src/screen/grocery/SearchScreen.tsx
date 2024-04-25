@@ -58,7 +58,7 @@ const SearchScreen = () => {
                                 </View>
                             )
                         }}
-                        keyExtractor={item=>item._id}
+                        keyExtractor={item=>item.id}
                         showsVerticalScrollIndicator={false}
                     />
             </View>

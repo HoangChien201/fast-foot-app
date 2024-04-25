@@ -1,22 +1,23 @@
 import { StyleSheet, Text, View,Image,TouchableOpacity,Linking } from 'react-native'
 import React from 'react'
 import { Color } from '../../../contanst/color'
-import { billDeliveryResType } from '../../store/billDeliveryReducer'
+import { order_type } from '../../store/billDeliveryReducer'
+import { userType } from '../../store/userReducer'
 
-const InformationUser = ({bill}:{bill:billDeliveryResType}) => {
+const InformationUser = ({user}:{user:userType}) => {
     function callPhoneHandle(){
-        Linking.openURL(`tel:${bill.deliveryLocation.phone}`)
+        Linking.openURL(`tel:${user.phone}`)
     }   
     return (
         <View style={styles.userContainer}>
             <View style={styles.flexRow}>
                 <View style={styles.avatarContainer}>
                     <Image
-                        source={{uri:bill.client.avatar}}
+                        source={{uri:user.avatar}}
                         style={styles.avatar}
                     />
                 </View>
-                <Text style={styles.nameUser}>{bill.deliveryLocation.nameRecipient}</Text>
+                <Text style={styles.nameUser}>{user.fullname}</Text>
             </View>
 
             <TouchableOpacity style={styles.iconPhoneContainer} onPress={callPhoneHandle}>
@@ -31,23 +32,23 @@ export default InformationUser
 const styles = StyleSheet.create({
     userContainer: {
         flexDirection: 'row',
-        justifyContent: "space-between",
-        alignItems: "center",
         width:'100%',
-        paddingHorizontal:24
+        alignItems:'center',
     },
     nameUser: {
         color: "#000",
         fontSize: 20,
-        fontWeight: 'bold'
+        fontWeight: 'bold',
+        flex:1,
+        textAlign:'center'
     },
     iconPhoneContainer: {
-        width: 50,
-        height: 50,
-        borderRadius: 50,
+        width: 40,
+        height: 40,
+        borderRadius: 40,
         justifyContent: 'center',
         alignItems: "center",
-        backgroundColor: Color.primary150
+        backgroundColor: Color.primary150,
     },
     iconPhone: {
         width: '40%',
@@ -55,14 +56,17 @@ const styles = StyleSheet.create({
     },
     flexRow: {
         flexDirection: 'row',
-        alignItems: 'center'
+        alignItems: 'center',
+        flex:1
     },
     avatarContainer: {
-        width: 60,
-        height: 60,
-        borderRadius: 80,
+        width: 40,
+        height: 40,
+        borderRadius: 40,
         overflow: 'hidden',
-        marginEnd: 10
+        justifyContent:"center",
+        alignContent:"center",
+        marginVertical:10
     },
     avatar: {
         width: '100%',

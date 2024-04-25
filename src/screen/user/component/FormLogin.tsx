@@ -44,7 +44,7 @@ const FormLogin = ({ onSubmit, credentialsInvalid }: { onSubmit: any, login?: bo
                     onChangeTextField={OnChangeTextField.bind(this, 'email')}
                 />
                 <Input
-                    placeholder='Mật khẩu'
+                    placeholder='Password'
                     placeholderTextColor={Color.placeholderTextColor}
                     password={true}
                     inValid={!password}
@@ -53,21 +53,21 @@ const FormLogin = ({ onSubmit, credentialsInvalid }: { onSubmit: any, login?: bo
                 />
             </View>
             <TouchableOpacity onPress={forgorPasswordOnPress}>
-                <Text style={styles.forgotPassword}>Quên mật khẩu ?</Text>
+                <Text style={styles.forgotPassword}>Forget passowrd ?</Text>
             </TouchableOpacity>
             <View style={styles.button}>
-                <ButtonCustom children='Đăng nhập' textColor='#fff' onPress={SubmitHandle} />
+                <ButtonCustom children='Login' textColor='#fff' onPress={SubmitHandle} />
             </View>
-            <Text style={{ fontSize: 18, marginVertical: 12, fontWeight: '700', color: "#000", textAlign: 'center' }}>hoặc</Text>
+            <Text style={{ fontSize: 18, marginVertical: 12, fontWeight: '700', color: "#000", textAlign: 'center' }}>or</Text>
             <View style={styles.buttonImageContainer}>
                 <ButtonImage
-                    children='Đăng nhập với Facebook'
+                    children='Login with Facebook'
                     source={require('../../../assets/images/icon/icon-fb.png')}
                     style={[styles.buttonImage, { backgroundColor: '#1877F2' }]}
                     textColor='#fff'
                 />
                 <ButtonImage
-                    children='Đăng nhập với Google'
+                    children='Login with Google'
                     source={require('../../../assets/images/icon/icon-gg.png')}
                     style={[styles.buttonImage, { backgroundColor: '#fff' }]} />
             </View>
@@ -98,7 +98,7 @@ const styles = StyleSheet.create({
         justifyContent: "space-between"
     },
     inputContainer: {
-        height: 134,
+        height: 160,
         justifyContent: "space-between"
     },
     forgotPassword: {

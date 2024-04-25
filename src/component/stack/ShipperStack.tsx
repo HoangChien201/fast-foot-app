@@ -15,10 +15,6 @@ const ShipperStack = () => {
             },
             headerTitleStyle:{
                 color:Color.primary200,
-                fontSize:24,
-                fontWeight:'bold',
-                fontFamily:'Klarna Text',
-                letterSpacing:-0.165,
             },
             headerTitleAlign:'center',
             cardStyle:{

@@ -1,25 +1,33 @@
 import 'react-native-gesture-handler';
-import React from "react";
+import React, { useEffect } from "react";
 import {Image} from 'react-native'
 
 import { createStackNavigator } from '@react-navigation/stack';
 
 import { GroceryRootStackParams,GroceryRootStackScreens } from "./GroceryRootStackParams";
 import { Color } from '../../contanst/color';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../store/store';
-import { Omit } from 'react-native';
-import { DefaultRouterOptions } from '@react-navigation/native';
 import { socket } from '../../helper/SocketHandle';
+import { getCartByUserHttp } from '../../http/CartHTTP';
+import { setCart } from '../store/cartReducer';
 
 const Stack=createStackNavigator<GroceryRootStackParams>();
 
 export default function GroceryStack():React.JSX.Element{
     const user=useSelector((state:RootState)=>state.user.value)
-    socket.on(`notification-${user?.id}`,(notification)=>{
-        console.log(notification);
-        
-    })
+    const dispatch=useDispatch()
+
+    async function getCartApi() {
+        if(!user) return
+        const respone= await getCartByUserHttp(user.id)
+        dispatch(setCart(respone.cart))
+    }
+
+    useEffect(()=>{
+        getCartApi()
+    },[])
+
     return (
         <Stack.Navigator
             screenOptions={{

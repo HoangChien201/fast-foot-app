@@ -4,89 +4,88 @@ import Animated, { runOnJS, runOnUI, useAnimatedGestureHandler, useAnimatedStyle
 import { PanGestureHandler, PanGestureHandlerGestureEvent } from 'react-native-gesture-handler'
 import { useDispatch, useSelector } from 'react-redux'
 
-import { removeCart, changeQuantity, cartType, cartItemType, cartResponeType, setCart, cartItemUpdateType } from '../../store/cartReducer'
+import { removeCart, changeQuantity, cartType, cartItemType, cartResponeType, setCart, cartItemUpdateType } from '../../store/modalAddCartReducer'
 import IconFontAwesome from 'react-native-vector-icons/FontAwesome'
 import { Color } from '../../../contanst/color'
 import ButtonIcon from '../ButtonIcon'
 import { RootState } from '../../store/store'
 import ShowOptionsDetail from './ShowOptionsDetail'
 import { SumPriceOptionAProduct } from '../../../contanst/Calculate'
-import { OptionIsSelectedType, OptionType } from '../../store/productReducer'
 import { deleteCartItemHttp, getCartByUserHttp, updateCartItemHttp } from '../../../http/CartHTTP'
 import { CURRENCY_VND } from '../../../contanst/FormatCurrency'
+import { ALERT_TYPE, Dialog } from 'react-native-alert-notification'
+import { changeQuantityCartItem } from '../../store/cartReducer'
 const LIST_ITEM_HIGHT = 110
 
-const CartItem = ({ data, onlyShow }: { data: cartItemType, onlyShow?: boolean }) => {
+const CartItem = ({ data, onlyShow,reloadCart }: { data: cartItemType, onlyShow?: boolean,reloadCart:any }) => {
     const dispatch = useDispatch();
-    const user=useSelector((state:RootState)=>state.user.value)
+    const user = useSelector((state: RootState) => state.user.value)
+    const [quantity, setQuantity] = useState(data.quantity)
+    async function updateApiCartByClient(value_change: cartItemUpdateType) {
+        if (user) {
+            const result = await updateCartItemHttp(product.id, user_id, value_change)
+            reloadCart()
 
-    async function getApiCartByClient(){
-        if(user){
-          const result:cartResponeType=await getCartByUserHttp(user.id)        
-          dispatch(setCart(result))
-          console.log('getAPi');
-          
-        }
-    }
-    async function updateApiCartByClient(value_change:cartItemUpdateType){
-        if(user){
-          const result=await updateCartItemHttp(p_id,user_id,value_change)        
         }
     }
 
-    const { user_id, instruction, quantity,
-        p_id,
-        p_name,
-        p_price,
-        p_image,
-        p_description,
-        p_quantity,
-        p_categoryId,
-        total, }: cartItemType = { ...data }
+    const { user_id, instruction, product }: cartItemType = { ...data }
 
     async function IncreaseQuantity() {
-        dispatch(changeQuantity({
-            id: p_id,
-            quantity: parseInt(quantity.toString()) + 1
-        }))
-        await updateApiCartByClient({quantity:parseInt(quantity.toString()) + 1})
-        await getApiCartByClient()
+        const qt = parseInt(quantity.toString()) + 1
+        await updateApiCartByClient({ quantity: qt })
+            .then(() => {
+                dispatch(changeQuantityCartItem({
+                    id:product.id,
+                    quantity:qt
+                }))
+            })
     }
     async function DecreaseQuantity() {
-        if (quantity > 0) {
-            dispatch(changeQuantity({
-                id: p_id,
-                quantity: parseInt(quantity.toString()) - 1
-            }))
-            await updateApiCartByClient({quantity:parseInt(quantity.toString()) - 1})
-        }
-        await getApiCartByClient()
+        if (quantity < 0) return
+
+        const qt = parseInt(quantity.toString()) - 1
+        await updateApiCartByClient({ quantity: qt })
+            .then(() => {
+                dispatch(changeQuantityCartItem({
+                    id:product.id,
+                    quantity:qt
+                }))
+            })
     }
 
     async function OnChangeTextQuantity(text: string) {
-        dispatch(changeQuantity({
-            id: p_id,
-            quantity: text
-        }))
-        if(isNaN(parseInt(text))){
-            await updateApiCartByClient({quantity:parseInt(text)})
-            await getApiCartByClient()
+        if (isNaN(parseInt(text))) {
+
+            await updateApiCartByClient({ quantity: parseInt(text) })
+                .then(() => {
+                    dispatch(changeQuantityCartItem({
+                        id:product.id,
+                        quantity:parseInt(text)
+                    }))
+                })
+
         }
-        else{
-            Alert.alert("Thông báo","Tham số không phải là số")
+        else {
+            Dialog.show({
+                type:ALERT_TYPE.WARNING,
+                title:"Warning",
+                textBody:"Value must is number",
+                button:"OK"
+            })
         }
 
     }
     return (
 
         <View style={[styles.cartContainer]}>
-            <Image style={styles.image} source={{ uri: p_image }} resizeMode='cover' />
+            <Image style={styles.image} source={{ uri: product.image }} resizeMode='cover' />
             <View style={{ paddingHorizontal: 10, width: '70%' }}>
-                <Text style={styles.name} ellipsizeMode='tail' numberOfLines={1}>{p_name}</Text>
-                <Text style={styles.detail} ellipsizeMode='tail' numberOfLines={2}>{p_description}</Text>
+                <Text style={styles.name} ellipsizeMode='tail' numberOfLines={1}>{product.name}</Text>
+                <Text style={styles.detail} ellipsizeMode='tail' numberOfLines={2}>{product.description}</Text>
 
                 <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', height: 50 }}>
-                    <Text style={styles.name}>{CURRENCY_VND(p_price)}</Text>
+                    <Text style={styles.name}>{CURRENCY_VND(product.price)}</Text>
                     <View style={styles.quantityContainer}>
                         {/* xử lý trường hợp hiện thị xem danh sanh bên hóa đón */}
                         {

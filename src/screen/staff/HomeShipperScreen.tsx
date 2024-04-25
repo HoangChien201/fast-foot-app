@@ -4,35 +4,51 @@ import { Color } from '../../contanst/color'
 import OrderShipperItem from '../../component/ui/shipper/OrderShipperItem'
 import { useSelector } from 'react-redux'
 import { RootState } from '../../component/store/store'
-import { getAllBillDeliveryHTTP } from '../../http/BillHTTP'
+import { getOrderTrackingDeliveringHTTP, getOrderTrackingWaitDeliveringHTTP } from '../../http/OrderTrackingHTTP'
+import { useIsFocused } from '@react-navigation/native'
+import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs'
+import WaitDeliveringShipperComponent from '../../component/ui/shipper/WaitDeliveringShipperComponent'
+import DeliveringShipperComponent from '../../component/ui/shipper/DeliveringShipperComponent'
+import DeliveredShipperComponent from '../../component/ui/shipper/DeliveredShipperComponent'
 
+const Stack=createMaterialTopTabNavigator()
 const HomeShipperScreen = () => {
-  const user=useSelector((state:RootState)=>state.user.value)
-  const [valueBill,setValueBill]=useState()
-  useEffect(()=>{
-    (async function getBillAPI() {
-      const resultBill=await getAllBillDeliveryHTTP();
-      setValueBill(resultBill)
-    })()
-  },[])
-  
   return (
-    <View style={styles.container}>
-        {
-          valueBill && 
-          <FlatList
-            data={valueBill}
-            renderItem={({item})=>{
-              return (
-                  <OrderShipperItem bill={item}/>
-              )
-            }}
-            keyExtractor={item=>item._id}
-            showsVerticalScrollIndicator={false}
-          />
-        }
-        
-    </View>
+    <Stack.Navigator
+    screenOptions={{
+      tabBarLabelStyle: {
+          textTransform:'capitalize',
+          fontWeight:'600',
+          fontSize:14,
+          color:Color.primary200
+      },
+      tabBarActiveTintColor:'red',
+      
+      
+}}
+    >
+      <Stack.Screen 
+        name='WaitDeliveringShipperComponent' 
+        component={WaitDeliveringShipperComponent} 
+        options={{
+          title:'Unconfirm'
+        }}
+      />
+      <Stack.Screen 
+        name='DeliveringShipperComponent' 
+        component={DeliveringShipperComponent} 
+        options={{
+          title:'Delivering'
+        }}
+      />
+      <Stack.Screen 
+        name='DeliveredShipperComponent' 
+        component={DeliveredShipperComponent} 
+        options={{
+          title:'Done'
+        }}
+      />
+    </Stack.Navigator>
 
   )
 }

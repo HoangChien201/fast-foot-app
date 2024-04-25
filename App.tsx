@@ -5,7 +5,7 @@
  * @format
  */
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import {
 } from 'react-native';
 
@@ -17,25 +17,34 @@ import { Notification, NotificationBackgroundFetchResult, NotificationCompletion
 import RequestNotificationPermission from './src/permissions/RequestNotificationPermission';
 import { registerRemoteNotificationsEvent } from './src/notifications/Events';
 import { useNetInfo } from '@react-native-community/netinfo';
+import { EventPayZalo } from './src/helper/ZaloPayment';
+import ManageAddressScreen from './src/screen/user/ManageAddressScreen';
+import { AlertNotificationRoot } from 'react-native-alert-notification';
+import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 
 
 
 function App(): JSX.Element {
-  SocketConnect()
+
   console.log('render');
-  
-  RequestNotificationPermission()
+  useEffect(()=>{
+    RequestNotificationPermission()
 
-  registerRemoteNotificationsEvent()
-
-  const netInfo = useNetInfo();
+    registerRemoteNotificationsEvent()
   
+  })
+
+
+
   return (
-    <Provider store={store}>
-      <ManageNavigation />
-    </Provider>
+      <AlertNotificationRoot>
+        <Provider store={store}>
+          <ManageNavigation />
+        </Provider>
+      </AlertNotificationRoot>
 
-    // <OrderCompleteScreen/>
+
+
   );
 }
 

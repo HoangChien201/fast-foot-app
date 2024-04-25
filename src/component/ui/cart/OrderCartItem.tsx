@@ -4,7 +4,7 @@ import Animated, { runOnJS, runOnUI, useAnimatedGestureHandler, useAnimatedStyle
 import { PanGestureHandler, PanGestureHandlerGestureEvent } from 'react-native-gesture-handler'
 import { useDispatch, useSelector } from 'react-redux'
 
-import { removeCart, changeQuantity, cartType, cartItemType } from '../../store/cartReducer'
+import { removeCart, changeQuantity, cartType, cartItemType } from '../../store/modalAddCartReducer'
 import IconFontAwesome from 'react-native-vector-icons/FontAwesome'
 import { Color } from '../../../contanst/color'
 import ButtonIcon from '../ButtonIcon'

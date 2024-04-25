@@ -1,28 +1,38 @@
 import { StyleSheet, Text, View, Modal, Pressable } from 'react-native'
 import React, { SetStateAction, useRef, useState } from 'react'
 import AddCartComponent from './AddCartComponent'
+import { useDispatch, useSelector } from 'react-redux'
+import { RootState } from '../../store/store'
+import { setDataAddCart } from '../../store/modalAddCartReducer'
 
 interface ModalAddCartProp{
-    visible:number,
-    setVisible: React.Dispatch<React.SetStateAction<number>>
 }
 
-const ModalAddCart:React.FC<ModalAddCartProp> = ({visible,setVisible}) => {
-    const hideModal=()=>{
-        setVisible(0)
+const ModalAddCart:React.FC<ModalAddCartProp> = () => {
+    const value=useSelector((state:RootState)=>state.modalAddCart.value)
+    const dispatch=useDispatch()
+
+    const {visible,product_id}=value
+    
+    function hideModal(){
+        dispatch(setDataAddCart({
+            product_id:null,
+            visible:false
+        }))
     }
+    
     return (
         <Modal
             animationType="slide"
             transparent={true}
-            visible={!!visible}
+            visible={visible}
         >
             <Pressable
-                onPress={(event) => event.target == event.currentTarget && setVisible(0)}
+                onPress={(event) => event.target == event.currentTarget && hideModal()}
                 style={[styles.modal]}
             >
                 <View style={styles.container}>
-                    <AddCartComponent id={visible} hideModal={hideModal}/>
+                    <AddCartComponent id={product_id} hideModal={hideModal}/>
                 </View>
             </Pressable>
         </Modal>

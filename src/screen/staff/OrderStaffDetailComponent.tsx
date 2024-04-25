@@ -17,14 +17,15 @@ const OrderStaffDetailComponent = ({orderTrackingActive,close}:{orderTrackingAct
   const [isLoading,setIsLoading]=useState(false)
   async function getOneOrderTrackingAPI() {
     setIsLoading(true)
-      const responeOrderTracking=await getOneOrderTrackingHTTP(order_id,user_id)
+      const responeOrderTracking=await getOneOrderTrackingHTTP(order_id)
       const responeOrderDetails= await getOrderDetailByOrderHTTP(order_id)
       setOrderDetails([...responeOrderDetails])
       setOrderTracking({...responeOrderTracking})
     setIsLoading(false)
 
   }
-
+  console.log('orderStaffDetails','render');
+  
   useEffect(()=>{
     getOneOrderTrackingAPI()
   },[])
@@ -48,7 +49,7 @@ const OrderStaffDetailComponent = ({orderTrackingActive,close}:{orderTrackingAct
         />
         {
           orderTracking && ![2,3,4].includes(orderTracking.status) &&
-          <ConfirmStaffContainer orderTracking={orderTracking} closeModal={close}/>
+          <ConfirmStaffContainer order_id={orderTracking.order.id} closeModal={close}/>
         }
     </View>
   )

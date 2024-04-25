@@ -3,14 +3,14 @@ import React from 'react'
 import ExclusivelyItem from './ExclusivelyItem'
 
 const Exclusively = () => {
-    const data = ['Giảm tới 33%',
-        'Giảm giá đặc biệt cho đơn hàng trực tuyến',
-        'Ưu đãi độc quyền cho thành viên VIP',
-        'Mua 3 sản phẩm, giảm ngay 20.000!']
+    const data = ['Reduce to 33%',
+        'Special discount for online orders',
+        'Exclusive offers for VIP members',
+        'Buy 3 products, get 20,000 discount!']
     const backgroundColors = ['#C80019', '#F1A100', '#EE6100', '#F14FB1']
     return (
         <View style={styles.container}>
-            <Text style={styles.heading}>Duy nhất tại của hàng</Text>
+            <Text style={styles.heading}>Only at the store</Text>
             <FlatList
                 data={data}
                 renderItem={({item,index})=>{

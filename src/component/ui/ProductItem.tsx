@@ -6,25 +6,26 @@ import {
     Text,
     Pressable
 }
-    from 'react-native';
-import Icon from 'react-native-vector-icons/FontAwesome'
-
-import { Color } from '../../contanst/color';
+from 'react-native';
 import { productType } from '../store/productReducer';
+import { useDispatch } from 'react-redux';
+import { setDataAddCart } from '../store/modalAddCartReducer';
+import { CURRENCY_VND } from '../../contanst/FormatCurrency';
 
 interface ProductItemProp {
     product: productType | undefined,
     type: string,
-    addPress?: any
 }
 
 
-const ProductItem: React.FC<ProductItemProp> = ({ product, type, addPress }) => {
+const ProductItem: React.FC<ProductItemProp> = ({ product, type}) => {
+    const dispatch=useDispatch()
     const { id, name, image, price, description } = { ...product };
     function AddPressHandle() {
-        console.log('onpress',id);
-        
-        addPress(id)
+        dispatch(setDataAddCart({
+            product_id:id,
+            visible:true
+        }))
     }
     return (
         <Pressable style={({ pressed }) => pressed && styles.pressed} onPress={AddPressHandle}>
@@ -41,14 +42,7 @@ const ProductItem: React.FC<ProductItemProp> = ({ product, type, addPress }) => 
                     </View>
 
                     <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
-                        <Text style={styles.name}>{price}</Text>
-                        {
-                            addPress &&
-                            <Pressable style={({ pressed }) => pressed && styles.pressed}>
-                                <Image source={require('../../assets/images/icon/icon-favorite.png')} />
-                            </Pressable>
-                        }
-
+                        <Text style={styles.name}>{CURRENCY_VND(price ? price : 0)}</Text>
                     </View>
                 </View>
             </View>

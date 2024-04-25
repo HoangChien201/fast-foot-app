@@ -44,7 +44,7 @@ export const AccountRootStackScreens=[
         name:AccountRootStackEnum.ManagerPaymentScreen,
         component:ManagerPaymentScreen,
         options:{
-            title:'Quản lý phương thức thanh toán '
+            title:'Payment Management '
         }
     },
     {
@@ -52,7 +52,7 @@ export const AccountRootStackScreens=[
         name:AccountRootStackEnum.SettingScreen,
         component:SettingScreen,
         options:{
-            title:'Cài đặt'
+            title:'Setting'
         }
     },
     {
@@ -68,7 +68,7 @@ export const AccountRootStackScreens=[
         name:AccountRootStackEnum.RecentOrderScreen,
         component:RecentOrderScreen,
         options:{
-            title:'Lịch sử đặt hàng'
+            title:'Order History'
         }
     },
     {
@@ -76,7 +76,7 @@ export const AccountRootStackScreens=[
         name:AccountRootStackEnum.BookmarkScreen,
         component:BookmarkScreen,
         options:{
-            title:'Ưa thích'
+            title:'Favorite'
         }
     },
     {
@@ -84,7 +84,7 @@ export const AccountRootStackScreens=[
         name:AccountRootStackEnum.FeedbackScreen,
         component:FeedbackScreen,
         options:{
-            title:'Ý kiến'
+            title:'Feedback'
         }
     },
     {

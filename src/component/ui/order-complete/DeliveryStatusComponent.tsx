@@ -1,43 +1,76 @@
 import { Button, FlatList, Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import * as Progress from 'react-native-progress';
-import { billDeliveryResType, billDeliveryType } from '../../store/billDeliveryReducer';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../store/store';
-import { checkOrderTrackingHTTP, getOrderTrackingHTTP } from '../../../http/OrderTrackingHTTP';
+import { checkOrderTrackingHTTP } from '../../../http/OrderTrackingHTTP';
 import { socket } from '../../../helper/SocketHandle';
 import { postLocalNotification } from '../../../notifications/Events';
+import { ALERT_TYPE, Dialog, AlertNotificationRoot, Toast } from 'react-native-alert-notification';
+import { useNavigation } from '@react-navigation/native';
 
-const DeliveryStatusComponent = ({ bill_id }: { bill_id: number }) => {
+const DeliveryStatusComponent = ({ order_id }: { order_id: number | string }) => {
   const [valueProcess, setValueProcess] = useState(-1)
+  const navigation = useNavigation()
   const user = useSelector((state: RootState) => state.user.value)
 
   async function getOrderTracking() {
     if (user) {
-      const checkOrder = await checkOrderTrackingHTTP(bill_id)
-      if (checkOrder.status == 1) {
-        setValueProcess(0)
-        return
+      const checkOrder = await checkOrderTrackingHTTP(order_id)
+
+      switch (checkOrder.status) {
+        case 1:
+          setValueProcess(0)
+          Toast.show({
+            type: ALERT_TYPE.SUCCESS,
+            title: 'Notification',
+            textBody: 'Your order is confirmed',
+          })
+          break;
+
+        case 3:
+          setValueProcess(0.5)
+          Toast.show({
+            type: ALERT_TYPE.SUCCESS,
+            title: 'Notification',
+            textBody: 'Your order is delivering',
+          })
+          break;
+        case 4:
+          setValueProcess(1)
+          Dialog.show({
+            type: ALERT_TYPE.SUCCESS,
+            title: 'Success',
+            textBody: 'Your order is delivered',
+            button: 'OK',
+            autoClose:true,
+            onPressButton: () => {
+              navigation.navigate('GroceryBottomTab')
+            }
+          })
+          break;
+        case 5:
+          Toast.show({
+            type: ALERT_TYPE.WARNING,
+            title: 'Warning',
+            textBody: 'Your order be cancled',
+          })
+          try {
+            navigation.navigate('GroceryBottomTab')
+  
+          } catch (error) {
+  
+          }
+          break;
       }
-      if (checkOrder.status == 2) {
-        setValueProcess(0.5)
-        return
-      }
-      if (checkOrder.status == 3) {
-        setValueProcess(1)
-        return
-      }
+    
     }
 
   }
   useEffect(() => {
     getOrderTracking()
     //xử lý khi có thông báo
-    socket.on(`notification-${user?.id}`, (msg) => {
-      postLocalNotification({
-        title: 'Thông báo',
-        body: msg.content
-      })
+    socket.on(`notification-${user?.id}`, (notification) => {
       getOrderTracking()
     })
     //

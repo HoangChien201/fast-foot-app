@@ -1,68 +1,114 @@
-import { Alert, StyleSheet, Text, View } from 'react-native'
-import React, { useLayoutEffect } from 'react'
+import { Alert, StyleSheet, Text, ToastAndroid, View } from 'react-native'
+import React, { useEffect, useLayoutEffect, useState } from 'react'
 import { Color } from '../../../contanst/color'
 import ButtonCustom from '../ButtonCustom'
-import { OrderTrackingType, createOrderTrackingHTTP } from '../../../http/OrderTrackingHTTP'
+import { OrderTrackingType, createOrderTrackingHTTP, getOneOrderTrackingHTTP } from '../../../http/OrderTrackingHTTP'
 import { SendNotification, socket } from '../../../helper/SocketHandle'
 import { Notifications } from 'react-native-notifications'
 import { postLocalNotification } from '../../../notifications/Events'
+import { TextButtonStatus } from '../../../contanst/FormatStatus'
+import { userType } from '../../store/userReducer'
+import { RootState } from '../../store/store'
+import { useSelector } from 'react-redux'
+import { getOneOrderHTTP } from '../../../http/BillHTTP'
 
-const ConfirmStaffContainer = ({ orderTracking, closeModal }: { orderTracking: OrderTrackingType, closeModal: any }) => {
-    const statusOT = orderTracking.status
+const ConfirmStaffContainer = ({ order_id, closeModal }: { order_id: number, closeModal?: any }) => {
+    const [orderTracking, setOrderTracking] = useState<OrderTrackingType>()
+    const user: userType|null = useSelector((state: RootState) => state.user.value)
+    useEffect(() => {
+        (async function getOrderTrackingAPI() {
+            const respone = await getOneOrderTrackingHTTP(order_id)
+            setOrderTracking(respone)
+        })()
+    }, [])
+
+    const statusOT = orderTracking && orderTracking.status
     async function onCancle() {
-        const notiCancle: SendNotification = {
-            to: orderTracking.user.id,
-            content: "Đơn hàng bạn bị hủy"
+        if (orderTracking) {
+            const order = await getOneOrderHTTP(orderTracking.order.id)
+            if (order) {
+                const notiCancle: SendNotification = {
+                    to: order.user.id,
+                    content: "Đơn hàng bạn bị hủy"
+                }
+                const body = {
+                    user_id: orderTracking.user.id,
+                    order_id: orderTracking.order.id,
+                    status: 5
+                }
+                await createOrderTrackingHTTP(body)
+                socket.emit('notification', notiCancle)
+                closeModal()
+
+            }
+
         }
-        postLocalNotification({
-            title:'Đơn hàng bị hủy',
-            body:'Vậy đó'
-        })
-        
-        const hasPermissions: boolean = await Notifications.isRegisteredForRemoteNotifications();
-        console.log(hasPermissions);
-        // const body={
-        //     user_id:orderTracking.user.id,
-        //     order_id:orderTracking.order.id,
-        //     status:4
-        // }
-        // await createOrderTrackingHTTP(body)
-        socket.emit('notification', notiCancle)
 
     }
     async function onConfirm() {
-        const statusCurrent = statusOT + 1
+        try {
+            if(!user) return
+            if (statusOT || statusOT === 0 && orderTracking) {
+                const statusCurrent = statusOT + 1
+                const body = {
+                    user_id: user.id,
+                    order_id: orderTracking.order.id,
+                    status: statusCurrent
+                }
+                await createOrderTrackingHTTP(body)
 
+                const order = await getOneOrderHTTP(orderTracking.order.id)
+                if (order) {
 
-        const body = {
-            user_id: orderTracking.user.id,
-            order_id: orderTracking.order.id,
-            status: statusCurrent
+                    //xử lý gửi thông báo theo trạng thái
+                    switch (statusCurrent) {
+                        case 1:
+                            socket.emit('notification', {
+                                to: order.user.id,
+                                content: 'Your order is confirmed'
+                            })
+                            break;
+
+                        case 2:
+                            //gửi thông báo cho shipper
+                            socket.emit('notification', {
+                                to: 'shipper',
+                                content: 'Có đơn hàng được giao cho bạn'
+                            })
+                            break;
+                        case 3:
+                            socket.emit('notification', {
+                                to: order.user.id,
+                                content: 'Your order is delivering'
+                            })
+                            break;
+                        case 4:
+                            socket.emit('notification', {
+                                to: order.user.id,
+                                content: 'Your order is delivered'
+                            })
+                            break;
+                    }
+                }
+                ToastAndroid.show("Confirm success", ToastAndroid.SHORT);
+                closeModal()
+
+            }
+        } catch (error) {
+            ToastAndroid.show("Confirm failed" + error, ToastAndroid.SHORT);
+            closeModal()
+
         }
-        await createOrderTrackingHTTP(body)
-        closeModal()
 
-        const notiCancle: SendNotification = {
-            to: orderTracking.user.id,
-        }
-        //xử lý gửi thông báo theo trạng thái
-        switch (statusCurrent) {
-            case 1:
-                socket.emit('notification', { ...notiCancle, content: 'Đơn hàng của bạn đang được chuẩn bị' })
-                break;
-
-            case 2:
-                socket.emit('notification', { ...notiCancle, content: 'Đơn hàng của bạn đã được giao cho tài xế' })
-                break;
-        }
     }
+
     return (
         <View style={styles.buttonContainer}>
             <View style={styles.btnCancle}>
-                <ButtonCustom children='Hủy' onPress={onCancle} />
+                <ButtonCustom children='Cancle' onPress={onCancle} />
             </View>
             <View style={styles.btnConfirm}>
-                <ButtonCustom children={statusOT === 0 ? 'Nhận đơn' : 'Giao hàng'} onPress={onConfirm} />
+                <ButtonCustom children={TextButtonStatus(statusOT)} onPress={onConfirm} />
             </View>
         </View>
     )
@@ -72,14 +118,13 @@ export default ConfirmStaffContainer
 
 const styles = StyleSheet.create({
     buttonContainer: {
-        height: 60,
+        height: 50,
         width: '100%',
         backgroundColor: 'transparent',
         flexDirection: 'row',
         justifyContent: "space-between",
         padding: 5,
-        position: 'absolute',
-        bottom: 0
+        marginTop:10
 
     },
     btnCancle: {

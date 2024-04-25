@@ -1,10 +1,14 @@
-import { View, Text, StyleSheet, Button, Pressable, TouchableOpacity, Dimensions, Alert } from 'react-native'
-import React from 'react'
+import { View, Text, StyleSheet, Button, Pressable, TouchableOpacity, Dimensions, Alert, NativeAppEventEmitter } from 'react-native'
+import React, { useCallback, useMemo, useRef, useState } from 'react'
 import { NativeModules, NativeEventEmitter } from 'react-native';
-import sha256 from 'crypto-js/sha256';
-import CryptoJS from 'crypto-js';
-import axios from 'axios';
-import { CreateOrder } from '../../http/PaymentZalo';
+
+import {
+  BottomSheetModal,
+  BottomSheetView,
+  BottomSheetModalProvider,
+} from '@gorhom/bottom-sheet';
+import { CreatePaymentOrder } from '../../http/PaymentZalo';
+import ModalBottomTabSheetComponent from '../../component/ui/ModalBottomTabSheetComponent';
 
 const VoucherScreen = () => {
   const [money, setMoney] = React.useState('10000')
@@ -12,27 +16,13 @@ const VoucherScreen = () => {
   const [returncode, setReturnCode] = React.useState('')
 
 
-  function getCurrentDateYYMMDD() {
-    var todayDate = new Date().toISOString().slice(2, 10);
-    return todayDate.split('-').join('');
-  }
-
   async function createOrder(money) {
-    let apptransid = getCurrentDateYYMMDD() + '_' + new Date().getTime()
-    let key1 = '8NdU5pG5R2spGHGhyO99HN1OhD8IQJBn'
-    let appid = 554
+
     let amount = parseInt(money)
     let appuser = "ZaloPayDemo"
-    let apptime = (new Date).getTime()
     let embeddata = "{}"
     let item = "[]"
-    let description = "Merchant description for order #" + apptransid
-    let hmacInput = appid + "|" + apptransid + "|" + appuser + "|" + amount + "|" + apptime + "|" + embeddata + "|" + item
-    // let mac =sha256(hmacInput+ "9phuAOYhan4urywHTh0ndEXiV3pKHr5Q")
-    let mac = CryptoJS.HmacSHA256(hmacInput, key1)
-    console.log("hmacInput: " + hmacInput);
-    console.log("mac: " + mac)
-    console.log('====================================');
+    let description = "Merchant description for order #"
     var order = {
       'app_user': appuser,
       'amount': amount,
@@ -42,8 +32,8 @@ const VoucherScreen = () => {
     }
 
     console.log(order)
-    const response= await CreateOrder(order)
-    const data=response
+    const response = await CreatePaymentOrder(order)
+    const data = response
     console.log(data)
     setToken(data.zp_trans_token)
     setReturnCode(data.return_code)
@@ -54,26 +44,47 @@ const VoucherScreen = () => {
   function payOrder() {
 
   }
+  const [visible,setVisible]=useState(false)
   function onPress() {
-    var payZP = NativeModules.PayZaloBridge;
-    payZP.payOrder(token);
+    // var payZP = NativeModules.PayZaloBridge;
+    // payZP.payOrder(token);
 
-    console.log(token);
+    // console.log(token);
+    console.log('opress');
+    setVisible(true)
+    
   }
-
+  console.log('render');
+  
 
   return (
-    <View style={{ flex: 1, alignItems: 'center' }}>
-      <Button title='Pay' onPress={() => {
-        createOrder(500)
-      }} />
-      <Button title='Zalo' onPress={onPress} />
+    <View style={styles.container}>
+      <Button
+        onPress={onPress}
+        title="Present Modal"
+        color="black"
+      />
+
+      <ModalBottomTabSheetComponent visible={visible} setVisible={setVisible} snapPointsProp={['100%']}>
+      <Text>Awesome 🎉</Text>
+
+      </ModalBottomTabSheetComponent>
     </View>
   )
 }
 
 export default VoucherScreen;
 const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    padding: 24,
+    justifyContent: 'center',
+    backgroundColor: 'grey',
+  },
+  contentContainer: {
+    flex: 1,
+    alignItems: 'center',
+  },
   taskContainer: {
     flexDirection: 'row',
     elevation: 6,

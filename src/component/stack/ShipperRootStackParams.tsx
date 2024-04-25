@@ -3,8 +3,8 @@ import StaffsScreen from "../../screen/manager/StaffsScreen"
 import IconEntypo from 'react-native-vector-icons/Entypo'
 import OrderCompleteScreen from "../../screen/user/OrderCompleteScreen"
 import ShipperBottomTab from "../bottom-stack/ShipperBottomTab"
-import OrderShipperDetail from "../../screen/staff/OrderShipperDetail"
 import ManageInformationUser from "../../screen/user/ManageInformationUser"
+import OrderShipperDetail from "../../screen/staff/OrderShipperDetail"
 
 enum ShipperRootStackEnum{
     OrderShipperDetailScreen="OrderShipperDetailScreen",
@@ -35,7 +35,7 @@ export const ShipperRootStackScreen=[
         name:ShipperRootStackEnum.OrderShipperDetailScreen,
         component:OrderShipperDetail,
         option:{
-            title:'Shipper'
+            title:'Delivery'
         }
     },
     {
@@ -43,7 +43,7 @@ export const ShipperRootStackScreen=[
         name:ShipperRootStackEnum.ManageInformationUser,
         component:ManageInformationUser,
         option:{
-            title:'Edit'
+            title:'Change'
         }
     },
 ]

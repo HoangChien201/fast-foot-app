@@ -22,7 +22,7 @@ const styles = StyleSheet.create({
         marginRight:10
     },
     title:{
-        fontSize:20,
+        fontSize:18,
         fontFamily:'poppin',
         color:"#fff",
         fontWeight:'bold',

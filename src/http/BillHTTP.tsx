@@ -1,6 +1,6 @@
 import axios from "axios";
 import AxiosInstance from "./AxiosInstance";
-import { order_type } from "../component/store/billDeliveryReducer";
+import { CreateOrderRequest, UpdateOrderRequest, order_type } from "../component/store/billDeliveryReducer";
 import { productType } from "../component/store/productReducer";
 
 export type OrderDetailType={
@@ -9,7 +9,7 @@ export type OrderDetailType={
     product:productType
 }
 
-export const addBillDeliveryHttp = async (bill:order_type) => {
+export const addBillDeliveryHttp = async (bill:CreateOrderRequest) => {
     try {
         const axiosInstance = AxiosInstance();
         const url = '/order';
@@ -21,11 +21,23 @@ export const addBillDeliveryHttp = async (bill:order_type) => {
     }
 }
 
-export const getOrderHTTP = async (id:number) => {
+export const updateOrderHttp = async (bill:UpdateOrderRequest,id:number) => {
+    try {
+        const axiosInstance = AxiosInstance();
+        const url = '/order/update/'+id;
+        const response:order_type = await axiosInstance.post(url,bill);
+        return response;
+    } catch (error) {
+        console.log('sua order loi');
+        // throw error;
+    }
+}
+
+export const getOneOrderHTTP = async (id:number|string) => {
     try {
         const axiosInstance = AxiosInstance();
         const url = '/order/find-one/'+id;
-        const response = await axiosInstance.get(url);
+        const response:order_type = await axiosInstance.get(url);
         return response;
     } catch (error) {
         console.log('không lấy được order');

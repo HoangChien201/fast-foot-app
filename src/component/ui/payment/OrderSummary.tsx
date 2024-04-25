@@ -1,23 +1,41 @@
 import { StyleSheet, Text, View, TouchableOpacity } from 'react-native'
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Color } from '../../../contanst/color'
 import { TotalPriceCart } from '../../../contanst/Calculate'
 import { useSelector } from 'react-redux'
 import { RootState } from '../../store/store'
 import { loadOptionDetail } from '../../store/optionDetailReducer'
 import { CURRENCY_VND } from '../../../contanst/FormatCurrency'
+import { cartItemType, cartsRespone } from '../../store/modalAddCartReducer'
+import { getCartByUserHttp } from '../../../http/CartHTTP'
 
 type OrderSummaryType = {
   subTotal: number,
-  tax: number,
   deliveryPrice: number,
 }
 
 const OrderSummary = ({ OnSubmit, updateValuePayment }: { OnSubmit?: any, updateValuePayment?: any }) => {
 
-  const cart = useSelector((state: RootState) => state.cart.value)
+  const [subTotal, setSubtotal] = useState<number>(0)
   const listProduct = useSelector((state: RootState) => state.product.value)
-  const optionDetail = useSelector((state: RootState) => state.optionDetail.value)
+  const user = useSelector((state: RootState) => state.user.value)
+
+  async function getApiCartByClient() {
+    if (user) {
+      try {
+        const result: cartsRespone = await getCartByUserHttp(user.id)
+        setSubtotal(parseInt(result.total))
+      } catch (error) {
+        console.log("lỗi giỏ hàng paytment");
+        
+      }
+
+    }
+  }
+  useEffect(() => {
+    getApiCartByClient()
+
+  }, [])
 
   function OrderSummaryComponent({ name, price }: { name: string, price: string }): JSX.Element {
     return (
@@ -29,44 +47,30 @@ const OrderSummary = ({ OnSubmit, updateValuePayment }: { OnSubmit?: any, update
   }
 
   const orderSummary: OrderSummaryType = {
-    subTotal: cart.total,
-    tax: 10000,
-    deliveryPrice: 15000,
+    subTotal: subTotal,
+    deliveryPrice: 1000,
   }
-  const total = orderSummary.subTotal + orderSummary.tax + orderSummary.deliveryPrice
+  const total = orderSummary.subTotal+ orderSummary.deliveryPrice
 
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Tóm tắt đơn hàng</Text>
       <View>
-        <OrderSummaryComponent name='Tổng tiền' 
-        price={`${CURRENCY_VND(orderSummary.subTotal)}`} />
-        <OrderSummaryComponent name='Thuế' price={`${CURRENCY_VND(orderSummary.tax)}`} />
-        <OrderSummaryComponent name='Phí giao hàng' price={`${CURRENCY_VND(orderSummary.deliveryPrice)}`} />
-        <View style={styles.line}></View>
-
-        <View style={styles.orderSummaryComponent}>
-          <Text style={styles.title}>Thành tiền</Text>
-          <Text style={styles.title}>{CURRENCY_VND(total)}</Text>
-        </View>
-
-      </View>
-      {/* <View>
-        <OrderSummaryComponent name='Subtotal' price={`123.000đ`} />
-        <OrderSummaryComponent name='Tax' price={`10.000đ`} />
-        <OrderSummaryComponent name='Delivery Price' price={`30.000đ`} />
+        <OrderSummaryComponent name='Subtotal'
+          price={`${CURRENCY_VND(orderSummary.subTotal)}`} />
+        <OrderSummaryComponent name='Charges' price={`${CURRENCY_VND(orderSummary.deliveryPrice)}`} />
         <View style={styles.line}></View>
 
         <View style={styles.orderSummaryComponent}>
           <Text style={styles.title}>Total</Text>
-          <Text style={[styles.title,{color:Color.primary200}]}>${`143.000đ`}</Text>
+          <Text style={styles.title}>{CURRENCY_VND(total)}</Text>
         </View>
 
-      </View> */}
+      </View>
       {
         OnSubmit &&
         <TouchableOpacity style={styles.buttonSubmit} onPress={OnSubmit}>
-          <Text style={styles.checkout}>Checkout - ${total.toFixed(3)}</Text>
+          <Text style={styles.checkout}>Checkout - {CURRENCY_VND(total)}</Text>
         </TouchableOpacity>
 
       }

@@ -20,7 +20,7 @@ export type GetAOrderTrackingRequest={
     order_id:number
 }
 
-export const checkOrderTrackingHTTP = async (order_id:number) => {
+export const checkOrderTrackingHTTP = async (order_id:number | string) => {
     try {
         const axiosInstance = AxiosInstance();
         const url = `/order-tracking/check-order?order_id=${order_id}`;
@@ -32,10 +32,10 @@ export const checkOrderTrackingHTTP = async (order_id:number) => {
     }
 }
 
-export const getOneOrderTrackingHTTP = async (order_id:number,user_id:number) => {
+export const getOneOrderTrackingHTTP = async (order_id:number) => {
     try {
         const axiosInstance = AxiosInstance();
-        const url = `/order-tracking/get-one-order-tracking?order_id=${order_id}&user_id=${user_id}`;
+        const url = `/order-tracking/get-one-order-tracking?order_id=${order_id}`;
         const response:OrderTrackingType = await axiosInstance.get(url);
         return response;
     } catch (error) {
@@ -100,6 +100,18 @@ export const getOrderTrackingDeliveringHTTP = async () => {
         return response;
     } catch (error) {
         console.log('không lấy được order-tracking đang giao');
+        throw error;
+    }
+}
+
+export const getOrderTrackingWaitDeliveringHTTP = async () => {
+    try {
+        const axiosInstance = AxiosInstance();
+        const url = `/order-tracking/get-order-wait-delivering`;
+        const response:Array<OrderTrackingType> = await axiosInstance.get(url);
+        return response;
+    } catch (error) {
+        console.log('không lấy được order-tracking chờ giao');
         throw error;
     }
 }

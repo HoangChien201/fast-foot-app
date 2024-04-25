@@ -8,7 +8,7 @@ const SeeItem = ({onPress}:{onPress:any}) => {
             <View style={styles.seeItemContainer}>
                 <View style={{ flexDirection: "row" }}>
                     <Image source={require('../../../assets/images/icon/icon-cart.png')} style={styles.iconCart} />
-                    <Text style={styles.title}>Giỏ hàng</Text>
+                    <Text style={styles.title}>See cart</Text>
                 </View>
                 <Image source={require('../../../assets/images/icon/icon-arrow-br-right.png')} style={styles.iconArrowRight} />
             </View>

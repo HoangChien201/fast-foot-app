@@ -1,18 +1,27 @@
 import { configureStore } from '@reduxjs/toolkit'
 import productReducer from './productReducer'
-import cartReducer from './cartReducer'
 import userReducer from './userReducer'
 import optionDetailReducer from './optionDetailReducer'
 import billDeliveryReducer from './billDeliveryReducer'
+import modalAddCartReducer from './modalAddCartReducer'
+import locationDelireryReducer from './locationDelireryReducer'
+import orderTrackingReducer from './orderTrackingReducer'
+import cartReducer from './cartReducer'
 
 export const store = configureStore({
   reducer: {
     product:productReducer,
-    cart:cartReducer,
+    modalAddCart:modalAddCartReducer,
     user:userReducer,
-    optionDetail:optionDetailReducer,
-    billDelivery:billDeliveryReducer
+    locationDelivery:locationDelireryReducer,
+    orderTracking:orderTrackingReducer,
+    cart:cartReducer,
+    
   },
+  middleware: (getDefaultMiddleware) => getDefaultMiddleware({
+    immutableCheck: false,
+    serializableCheck: false,
+  })
 })
 
 // Infer the `RootState` and `AppDispatch` types from the store itself

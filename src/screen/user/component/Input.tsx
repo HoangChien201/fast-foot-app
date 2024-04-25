@@ -77,7 +77,7 @@ const styles = StyleSheet.create({
         fontFamily: 'poppins',
         fontWeight: '400',
         lineHeight: 21,
-        fontSize: 14,
+        fontSize: 16,
         letterSpacing: 0.12,
         marginVertical: 5,
     },
@@ -86,7 +86,7 @@ const styles = StyleSheet.create({
         borderWidth: 1,
         borderColor: '#fff',
         paddingHorizontal: 10,
-        height:58,
+        minHeight:58,
         backgroundColor:'#fff'
     },
     inputContainer: {

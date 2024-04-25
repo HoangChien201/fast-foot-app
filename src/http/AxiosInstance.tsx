@@ -5,7 +5,6 @@ import { url } from '../contanst/url';
 const AxiosInstance = (contentType = 'application/json') => {
     const axiosInstance = axios.create({
         baseURL: url,
-        // baseURL: 'https://fast-food-zz3b.onrender.com/',
     });
 
     axiosInstance.interceptors.request.use(

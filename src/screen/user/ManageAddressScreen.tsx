@@ -8,145 +8,122 @@ import { ScrollView } from "react-native";
 import { Alert } from "react-native";
 import { NavigationProp, useNavigation } from "@react-navigation/native";
 import { PROVINCES_VIETNAM_API } from "../../contanst/ProvinceVietNamAPI";
-import SelectDownProvince from "../../component/ui/address/SelectDownProvince";
+import SelectDownComponent from "../../component/ui/address/SelectDownComponent";
 import Input from "./component/Input";
-import { addAddressHTTP, updateClientHTTP } from "../../http/UserHTTP";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../component/store/store";
 import { updateUser } from "../../component/store/userReducer";
+import { ALERT_TYPE, AlertNotificationRoot, Dialog, Toast } from "react-native-alert-notification";
+import { setLocationDelivery } from "../../component/store/locationDelireryReducer";
 
 function ManageAddressScreen({ route }: any) {
     const navigation: NavigationProp<ReactNavigation.RootParamList> = useNavigation()
     const dispatch = useDispatch()
-    const user = useSelector((state: RootState) => state.user.value)
-    const type = route.params?.type
+    // const user = useSelector((state: RootState) => state.user.value)
+    // const type = route.params?.type
 
 
     // const data = route.params?.data
     const [valueAddress, setValueAddress] = useState({
         nameRecipient: '',
         phone: '',
-        city: '',
+        province: '',
         district: '',
-        addressType: '',
         detail: '',
         ward: ''
     })
 
     const [indexValueAddress, setIndexValueAddress] = useState(
         {
-            province: 0,
-            district: 0,
+            province: null,
+            district: null,
         }
     )
-    // useEffect(() => {
-    //     setValueAddress((prevValue) => {
-    //         return { ...prevValue, ...data }
-    //     })
-
-    // }, [])
     async function OnSubmit() {
-        const { phone, nameRecipient, city, district, addressType, detail, ward } = { ...valueAddress }
+        const { phone, nameRecipient, province, district, detail, ward } = { ...valueAddress }
+            if(!phone || !nameRecipient || !province || !district || !detail || !ward){
+                
+                Dialog.show({
+                    type: ALERT_TYPE.WARNING,
+                    title: 'Warning',
+                    textBody: 'Have the field is empty',
+                    button: 'OK',
+                  })
 
-
-
-        if (type === 'address-delivery') {
-            if (!phone || !nameRecipient || !city || !district || !addressType || !detail || !ward) {
-                Alert.alert("Notification", "All fields need to be entered");
-                return;
-            } else {
-                navigation.navigate("PaymentScreen", {
-                    address: valueAddress
-                })
+                  return;
             }
-        }
-        else {
-            if (!city || !district || !addressType || !detail || !ward) {
-                Alert.alert("Notification", "All fields need to be entered");
-                return;
-            } else {
-                const { nameRecipient, phone, ...address } = valueAddress
-                if (user?.client) {
-                    const addressReq = { ...address, client: user.client._id }
-                    // const result = await addAddressHTTP(addressReq)
 
-                }
-                dispatch(updateUser({ address: address }))
-                navigation.goBack()
-            }
-        }
+            dispatch(setLocationDelivery(valueAddress))
+            navigation.goBack();
     }
 
-    function updateValue(type: string, value: string) {
+    function updateValue(value:any) {
         setValueAddress(prevValue => {
-            return { ...prevValue, [type]: value }
+            return { ...prevValue, ...value }
         })
     }
-
+        
     return (
+
         <KeyboardAvoidingView style={styles.container}>
             <ScrollView showsVerticalScrollIndicator={false}>
-                <View >
-                    <View style={styles.inputContainer}>
-                        {
-                            type === 'delivery-address' &&
-                            <View>
-                                <Input placeholder="Tên người nhận"
-                                    placeholderTextColor={Color.placeholderTextColor}
-                                    value={valueAddress.nameRecipient}
-                                    onChangeTextField={(text: string) => updateValue("nameRecipient", text)}
-                                />
-                                <Input placeholder='Điện thoại'
-                                    placeholderTextColor={Color.placeholderTextColor}
-                                    value={valueAddress.phone}
-                                    onChangeTextField={(text: string) => updateValue("phone", text)}
-                                />
-                            </View>
-                        }
+                <View style={styles.inputContainer}>
+                    <Input placeholder="Recipient's name"
+                        placeholderTextColor={Color.placeholderTextColor}
+                        value={valueAddress.nameRecipient}
+                        onChangeTextField={(text: string) => updateValue({"nameRecipient":text})}
+                    />
+                    <Input placeholder='Phone'
+                        placeholderTextColor={Color.placeholderTextColor}
+                        value={valueAddress.phone}
+                        onChangeTextField={(text: string) => updateValue({"phone": text})}
+                    />
 
-                        {/* province */}
-                        <SelectDownProvince
-                            data={PROVINCES_VIETNAM_API}
-                            updateValue={updateValue}
-                            setIndexProvince={setIndexValueAddress}
-                            type="province"
-                        />
-                        {/* district */}
-                        <SelectDownProvince
-                            data={PROVINCES_VIETNAM_API}
-                            updateValue={updateValue}
-                            setIndexProvince={setIndexValueAddress}
-                            type="district"
-                            province={indexValueAddress.province}
-                        />
+                    {/* province */}
+                    <SelectDownComponent
+                        data={PROVINCES_VIETNAM_API}
+                        updateValue={updateValue}
+                        setIndexProvince={setIndexValueAddress}
+                        type="province"
+                    />
+                    {/* district */}
+                    <SelectDownComponent
+                        data={PROVINCES_VIETNAM_API}
+                        updateValue={updateValue}
+                        setIndexProvince={setIndexValueAddress}
+                        type="district"
+                        province={indexValueAddress.province}
+                        disabled={indexValueAddress.province ===0 ? false : indexValueAddress.province}
+                    />
 
-                        {/* ward */}
-                        <SelectDownProvince
-                            data={PROVINCES_VIETNAM_API}
-                            updateValue={updateValue}
-                            setIndexProvince={setIndexValueAddress}
-                            type="ward"
-                            province={indexValueAddress.province}
-                            district={indexValueAddress.district}
+                    {/* ward */}
 
-                        />
+                    <SelectDownComponent
+                        data={PROVINCES_VIETNAM_API}
+                        updateValue={updateValue}
+                        setIndexProvince={setIndexValueAddress}
+                        type="ward"
+                        province={indexValueAddress.province}
+                        district={indexValueAddress.district}
+                        disabled={indexValueAddress.district === 0 ? false : indexValueAddress.district}
 
-                        <Input placeholder='Chi tiết'
-                            placeholderTextColor={Color.placeholderTextColor}
-                            value={valueAddress.detail}
-                            onChangeTextField={(text: string) => updateValue("detail", text)}
-                        />
+                    />
 
-                        <AddressTypeComponent updateValueAddress={updateValue} />
+                    <Input placeholder='Detail'
+                        placeholderTextColor={Color.placeholderTextColor}
+                        value={valueAddress.detail}
+                        onChangeTextField={(text: string) => updateValue({"detail":text})}
+                    />
 
-                    </View>
-                    <TouchableOpacity style={styles.buttonSubmit} onPress={OnSubmit}>
-                        <Text style={styles.textButton}>Add</Text>
-                    </TouchableOpacity>
+
                 </View>
+                <TouchableOpacity style={styles.buttonSubmit} onPress={OnSubmit}>
+                    <Text style={styles.textButton}>Complete</Text>
+                </TouchableOpacity>
             </ScrollView>
 
         </KeyboardAvoidingView>
+
     );
 }
 
@@ -156,6 +133,7 @@ const styles = StyleSheet.create({
     container: {
         backgroundColor: Color.backgroundGray,
         paddingHorizontal: 16,
+        paddingTop:20,
         flex: 1,
         justifyContent: "space-between",
     },
@@ -183,9 +161,8 @@ const styles = StyleSheet.create({
         fontWeight: 'bold'
     },
     inputContainer: {
-        backgroundColor: "red",
-        height: 500,
-        justifyContent: "space-around"
+        height: 450,
+        justifyContent: 'flex-start'
     }
 
 })

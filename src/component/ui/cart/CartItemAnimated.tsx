@@ -4,19 +4,20 @@ import Animated, { runOnJS, runOnUI, useAnimatedGestureHandler, useAnimatedStyle
 import { PanGestureHandler, PanGestureHandlerGestureEvent } from 'react-native-gesture-handler'
 import { useDispatch, useSelector } from 'react-redux'
 
-import { removeCart, changeQuantity, cartType, cartItemType } from '../../store/cartReducer'
+import { cartItemType } from '../../store/modalAddCartReducer'
 import IconFontAwesome from 'react-native-vector-icons/FontAwesome'
 import { Color } from '../../../contanst/color'
 import ButtonIcon from '../ButtonIcon'
 import { RootState } from '../../store/store'
 import ShowOptionsDetail from './ShowOptionsDetail'
 import { SumPriceOptionAProduct } from '../../../contanst/Calculate'
-import { OptionIsSelectedType, OptionType } from '../../store/productReducer'
 import { deleteCartItemHttp } from '../../../http/CartHTTP'
 import CartItem from './CartItem'
+import { removeCartItem } from '../../store/cartReducer'
+import { ALERT_TYPE, Dialog } from 'react-native-alert-notification'
 const LIST_ITEM_HIGHT = 110
 
-const CartItemAnimated = ({ data, onlyShow,simultaneousHandlers }: { data: cartItemType, onlyShow?: boolean }) => {
+const CartItemAnimated = ({ data, onlyShow, simultaneousHandlers,reloadCart }: { data: cartItemType, onlyShow?: boolean, simultaneousHandlers: React.Ref<unknown> | React.Ref<unknown>[],reloadCart:any }) => {
     const dispatch = useDispatch();
     //animated
     const translateX = useSharedValue(0)
@@ -66,10 +67,19 @@ const CartItemAnimated = ({ data, onlyShow,simultaneousHandlers }: { data: cartI
     }
     //
     async function RemoveCart() {
-        const response=await deleteCartItemHttp(data.p_id,data.user_id)
-        console.log(response);
-        
-        dispatch(removeCart(data.p_id))
+        try {
+            await deleteCartItemHttp(data.product.id, data.user_id)
+            reloadCart()
+            dispatch(removeCartItem({ id: data.product.id}))
+        } catch (error) {
+            Dialog.show({
+                type:ALERT_TYPE.DANGER,
+                title:"FastFood",
+                textBody:"Network being not stable",
+                button:"OK"
+            })
+        }
+
     }
 
     return (
@@ -81,7 +91,7 @@ const CartItemAnimated = ({ data, onlyShow,simultaneousHandlers }: { data: cartI
             </View>
             <PanGestureHandler simultaneousHandlers={simultaneousHandlers} onGestureEvent={panGestureHandler}>
                 <Animated.View style={rStyle}>
-                    <CartItem data={data} />
+                    <CartItem data={data} reloadCart={reloadCart}/>
                 </Animated.View>
             </PanGestureHandler>
         </Animated.View>

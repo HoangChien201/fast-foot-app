@@ -3,22 +3,20 @@ import React, { useState, useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import Loading from '../../component/ui/Loading';
 // import FormLogin from './user/component/FormLogin';
-import ButtonImage from '../../component/ui/ButtonImage';
 import { addUser, formLogin } from '../../component/store/userReducer';
 import { Color } from '../../contanst/color';
 import { login } from '../../http/UserHTTP';
-import { navigationType } from '../../component/navigation/ManageNavigation';
-import { LOGO_APP } from '../../contanst/contanst';
 import FormLogin from './component/FormLogin';
+import { useNavigation } from '@react-navigation/native';
 
 export type credentialsInvalidType = {
     email: boolean,
     password: boolean
 }
 
-const LoginScreen = ({ navigation }: { navigation: navigationType }) => {
+const LoginScreen = () => {
     const dispatch = useDispatch()
-
+    const navigation=useNavigation()
     const [isLoading, setIsLoading] = useState(false);
     const [credentialsInvalid, setCredentialsInvalid] = useState<credentialsInvalidType>({
         email: true,
@@ -53,7 +51,7 @@ const LoginScreen = ({ navigation }: { navigation: navigationType }) => {
             dispatch(addUser(result.data))
         } catch (error) {
             setIsLoading(false);
-            Alert.alert("Lỗi","Mật khẩu hoặc tài khoản không đúng")
+            Alert.alert("Error","Email or password incorrect")
         }
 
     }

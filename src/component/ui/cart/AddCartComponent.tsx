@@ -8,11 +8,13 @@ import { RootState } from '../../store/store'
 import ButtonIcon from '../ButtonIcon'
 import { Color } from '../../../contanst/color'
 import OptionProductCartComponent from './OptionProductCartComponent'
-import { OptionIsSelectedType, OptionType } from '../../store/productReducer'
 import { SumPriceOptionAProduct } from '../../../contanst/Calculate'
 import {addCartItemHttp } from '../../../http/CartHTTP'
+import { ALERT_TYPE, Dialog } from 'react-native-alert-notification'
+import { addCartItem } from '../../store/cartReducer'
+import { CURRENCY_VND } from '../../../contanst/FormatCurrency'
 
-const AddCartComponent = ({ id, hideModal }: { id: number, hideModal: any }) => {
+const AddCartComponent = ({ id, hideModal }: { id: number | null, hideModal: any }) => {
     const dispatch = useDispatch()
 
     const user = useSelector((state: RootState) => state.user.value)
@@ -44,15 +46,28 @@ const AddCartComponent = ({ id, hideModal }: { id: number, hideModal: any }) => 
     const OnSubmit = async () => {
         if (product && user) {
             try {
-                const resultCartDetail = await addCartItemHttp({
+                const cartItem=await addCartItemHttp({
                     product_id: product?.id,
                     user_id: user?.id,
                     quantity: parseInt(quantityValue),
                     instruction: 'instructions',
                 })
-                Alert.alert("Thông báo","Đã thêm vào giỏ hàng")
+
+                dispatch(addCartItem(cartItem))
+
+                Dialog.show({
+                    type:ALERT_TYPE.SUCCESS,
+                    title:"Success",
+                    textBody:"Added to cart ",
+                    button:"OK"
+                })
             } catch (error) {
-                Alert.alert("Thông báo","Lỗi")
+                Dialog.show({
+                    type:ALERT_TYPE.DANGER,
+                    title:"Failed",
+                    textBody:"Added to cart failed",
+                    button:"OK"
+                })
                 
             }
             
@@ -82,7 +97,7 @@ const AddCartComponent = ({ id, hideModal }: { id: number, hideModal: any }) => 
                 </View>
                 <TouchableOpacity style={styles.buttonSubmit} onPress={OnSubmit}>
                     <Ionicon name='bag' size={24} color='#fff' />
-                    <Text style={styles.addToCart}>Add to cart - ${totalPrice.toFixed(2)}</Text>
+                    <Text style={styles.addToCart}>Add to cart - {CURRENCY_VND(totalPrice)}</Text>
                 </TouchableOpacity>
             </ScrollView>
         </View>

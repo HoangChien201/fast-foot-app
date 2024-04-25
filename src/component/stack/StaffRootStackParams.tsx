@@ -21,7 +21,7 @@ export const StaffRootStackScreen=[
         name:StaffRootStackEnum.UnConfirmScreen,
         component:StaffScreen,
         option:{
-            title:'Chờ xác nhận',
+            title:'Unconfirm',
         }
     },
     {
@@ -29,7 +29,7 @@ export const StaffRootStackScreen=[
         name:StaffRootStackEnum.ConfirmedScreen,
         component:StaffScreen,
         option:{
-            title:'Đang chuẩn bị',
+            title:'Prepering',
         }
     },
     {
@@ -37,7 +37,7 @@ export const StaffRootStackScreen=[
         name:StaffRootStackEnum.DeliveingScreen,
         component:StaffScreen,
         option:{
-            title:'Đang giao',
+            title:'Delivering',
         }
     },
     {
@@ -45,7 +45,7 @@ export const StaffRootStackScreen=[
         name:StaffRootStackEnum.DoneScreen,
         component:StaffScreen,
         option:{
-            title:'Đã xong',
+            title:'Done',
         }
     },
 ]

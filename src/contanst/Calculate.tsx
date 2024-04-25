@@ -1,4 +1,4 @@
-import { cartItemType, cartType } from "../component/store/cartReducer"
+import { cartItemType, cartType } from "../component/store/modalAddCartReducer"
 import { OptionIsSelectedType, OptionType, productType} from "../component/store/productReducer"
 import { OptionDetailType } from "../component/store/optionDetailReducer"
 
